@@ -56,3 +56,11 @@ test('invalid dates, month sliding, malformed rules and oversized simulations ar
 test('100,000 requests evaluated without sampling',()=>{
  const q=config({base:100000,baseUnit:'total',peaks:[],rules:[rule(100000,'month')]});const result=a.qSimulate(q);assert.equal(result.rows.length,100000);assert(result.rows.every(r=>r.status===200));
 });
+test('policy generation maps active rules with explicit counter and reset semantics',()=>{
+ const scope=vm.createContext({Intl});vm.runInContext(script.split('// UI only below this marker')[0]+'\nthis.generate=qPolicyGenerate;',scope);
+ const out=scope.generate({...a.QDEFAULTS,rules:[rule(3,'second','sliding'),{...rule(10,'minute'),enabled:false},rule(3600,'hour','sliding'),rule(10000,'month')]},'verified.client.id');
+ assert.equal(out.policies.length,3);assert.equal(out.policies[1].filename,'Quota-03-hour.xml');assert.match(out.policies[0].xml,/<Distributed>false<\/Distributed>/);assert(!out.policies[0].xml.includes('<Synchronous>'));
+ assert.match(out.policies[1].xml,/type="rollingwindow"/);assert.match(out.policies[1].xml,/<Synchronous>true<\/Synchronous>/);assert.match(out.policies[1].xml,/<Identifier ref="verified.client.id"\/>/);
+ assert(!out.policies[2].xml.includes('type="calendar"'));assert(!out.policies[2].xml.includes('<StartTime>'));assert(out.notes.some(n=>n.includes('UTC+3')));assert(out.notes.some(n=>n.includes('atomic')));assert.equal((out.requestSteps.match(/<Step>/g)||[]).length,3);
+ assert.throws(()=>scope.generate({...a.QDEFAULTS,rules:[]}),/Enable at least one/);assert.throws(()=>scope.generate(a.QDEFAULTS,'x"/><Invalid/>'),/Identifier/);
+});

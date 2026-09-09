@@ -199,3 +199,13 @@ test('random target sample preview matches applied custom traffic and survives o
  x.input('targetCount',10001);assert.equal(x.$('targetApply').disabled,true);assert.match(x.$('targetResult').textContent,/no sampling/i);assert.deepEqual(x.errors,[]);assert.deepEqual(y.errors,[]);
  }finally{x.w.close();y?.w.close();}
 });
+test('quota XML generation exports valid individual files and a manifest, and invalidates stale outputs',async()=>{
+ const x=open();try{x.$('qGenerate').click();assert.equal(x.$('qPolicyOutput').hidden,false);assert.equal(x.$('qPolicyFile').options.length,5);
+ const parse=text=>new x.w.DOMParser().parseFromString(text,'application/xml');assert.equal(parse(x.$('qPolicyXML').value).querySelector('parsererror'),null);
+ x.$('qPolicyFile').value='2';x.$('qPolicyFile').dispatchEvent(new x.w.Event('change'));assert.match(x.$('qPolicyXML').value,/<TimeUnit>hour<\/TimeUnit>/);
+ x.$('qPolicyDownload').click();assert.equal(x.downloads.at(-1).name,'Quota-03-hour.xml');assert.equal(parse(await x.blobText(x.blobs.at(-1))).documentElement.tagName,'Quota');
+ x.$('qPolicyBundle').click();const manifest=JSON.parse(await x.blobText(x.blobs.at(-1)));assert.equal(manifest.policies.length,5);for(const p of manifest.policies){assert.equal(parse(p.xml).querySelector('parsererror'),null);assert.equal(parse(p.xml).documentElement.getAttribute('name'),p.name);}
+ x.input('qBase',10);assert.equal(x.$('qPolicyOutput').hidden,true);const count=x.downloads.length;x.$('qPolicyDownload').click();assert.equal(x.downloads.length,count);
+ x.input('qIdentifier','bad"/><script>');x.$('qGenerate').click();assert.equal(x.$('qPolicyError').hidden,false);assert.equal(x.$('qPolicyOutput').hidden,true);assert.deepEqual(x.errors,[]);
+ }finally{x.w.close();}
+});
