@@ -51,7 +51,7 @@ test('empty traffic, disabled rules and full CSV export',()=>{
 });
 test('invalid dates, month sliding, malformed rules and oversized simulations are rejected',()=>{
  for(const c of [{start:'2026-02-30T00:00'},{end:'2026-09-01T00:00'},{end:'2028-01-01T00:00'},{rules:[rule(1,'month','sliding')]},{base:''},{base:1.5},{timezone:99},{rules:Array(13).fill(rule(1,'hour'))},{peaks:[{start:'12:00',end:'12:00',amount:1,repeat:'all'}]}])assert.throws(()=>config(c));
- assert.throws(()=>a.qPlan(config({base:100000,baseUnit:'minute'})),/100.000/);
+ assert.throws(()=>a.qPlan(config({base:100000,baseUnit:'minute'})),/100,000/);
 });
 test('100,000 requests evaluated without sampling',()=>{
  const q=config({base:100000,baseUnit:'total',peaks:[],rules:[rule(100000,'month')]});const result=a.qSimulate(q);assert.equal(result.rows.length,100000);assert(result.rows.every(r=>r.status===200));

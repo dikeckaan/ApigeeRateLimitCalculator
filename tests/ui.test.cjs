@@ -4,9 +4,9 @@ const fs=require('node:fs');
 const path=require('node:path');
 const {JSDOM,VirtualConsole}=require('jsdom');
 const html=fs.readFileSync(path.join(__dirname,'../index.html'),'utf8');
-function open(source=html){
+function open(source=html,url='file:///tmp/spike-arrest.html'){
  const errors=[],blobs=[],downloads=[];const virtualConsole=new VirtualConsole();virtualConsole.on('jsdomError',e=>errors.push(e.message));
- const dom=new JSDOM(source,{runScripts:'dangerously',url:'file:///tmp/spike-arrest.html',virtualConsole,beforeParse(w){
+ const dom=new JSDOM(source,{runScripts:'dangerously',url,virtualConsole,beforeParse(w){
   w.URL.createObjectURL=b=>{blobs.push(b);return 'blob:test/'+blobs.length;};w.URL.revokeObjectURL=()=>{};
   w.HTMLAnchorElement.prototype.click=function(){downloads.push({name:this.download,url:this.href});};
  }});
@@ -55,17 +55,17 @@ test('scenario import validates before changing UI and rejects invalid files',as
  const x=open();try{
   const choose=async data=>{const text=JSON.stringify(data);Object.defineProperty(x.$('configFile'),'files',{configurable:true,value:[{size:text.length,text:async()=>text}]});x.$('configFile').dispatchEvent(new x.w.Event('change'));await new Promise(r=>setTimeout(r,0));};
   await choose({version:2,config:{rate:5,model:'x',traffic:'burst',burstSize:10,interval:1000,count:20}});assert.equal(x.$('rate').value,'5');assert.equal(x.$('passed').textContent,'10');
-  await choose({version:2,config:{rate:-1}});assert.equal(x.$('rate').value,'5');assert.match(x.$('notice').textContent,/açılamadı/);
+  await choose({version:2,config:{rate:-1}});assert.equal(x.$('rate').value,'5');assert.match(x.$('notice').textContent,/Could not open/);
   await choose({version:1,config:{rate:99}});assert.equal(x.$('rate').value,'5');assert.deepEqual(x.errors,[]);
  }finally{x.w.close();}
 });
 
 test('quota workspace runs multi-limit plan, marks stale results, paginates and validates edits',()=>{
  const x=open();try{
-  x.$('quotaTab').click();assert.equal(x.$('spikeLab').hidden,true);assert.equal(x.$('qResults').hidden,false);assert.equal(x.$('qTotal').textContent,'28.000');assert.equal(x.$('qRuleStats').children.length,5);assert.equal(x.$('qRows').children.length,100);
+  x.$('quotaTab').click();assert.equal(x.$('spikeLab').hidden,true);assert.equal(x.$('qResults').hidden,false);assert.equal(x.$('qTotal').textContent,'28,000');assert.equal(x.$('qRuleStats').children.length,5);assert.equal(x.$('qRows').children.length,100);
   x.$('qNext').click();assert.equal(x.$('qRows').firstElementChild.firstElementChild.textContent,'101');
-  x.input('qBase',1000);assert.equal(x.$('qStale').hidden,false);assert.equal(x.$('qTotal').textContent,'28.000');
-  x.$('quotaConfig').dispatchEvent(new x.w.Event('submit',{cancelable:true}));assert.equal(x.$('qTotal').textContent,'21.000');assert.equal(x.$('qStale').hidden,true);
+  x.input('qBase',1000);assert.equal(x.$('qStale').hidden,false);assert.equal(x.$('qTotal').textContent,'28,000');
+  x.$('quotaConfig').dispatchEvent(new x.w.Event('submit',{cancelable:true}));assert.equal(x.$('qTotal').textContent,'21,000');assert.equal(x.$('qStale').hidden,true);
   x.input('qBase',100000);assert.equal(x.$('qRun').disabled,true);assert.equal(x.$('qError').hidden,false);x.input('qBase',0);assert.equal(x.$('qRun').disabled,false);
   x.$('addRule').click();assert.equal(x.$('quotaRules').children.length,6);const last=x.$('quotaRules').lastElementChild;const unit=last.querySelector('[data-field="unit"]');unit.value='month';unit.dispatchEvent(new x.w.Event('input',{bubbles:true}));assert.equal(last.querySelector('[data-field="mode"]').disabled,true);
   last.querySelector('[data-remove-rule]').click();assert.equal(x.$('quotaRules').children.length,5);
@@ -88,6 +88,65 @@ test('quota plan JSON round trip, filter-aware CSV, and empty traffic state',asy
   plan.config.base=7;plan.config.baseUnit='total';plan.config.peaks=[];plan.config.rules=[];
   const text=JSON.stringify(plan);Object.defineProperty(x.$('qFile'),'files',{configurable:true,value:[{size:text.length,text:async()=>text}]});x.$('qFile').dispatchEvent(new x.w.Event('change'));await new Promise(r=>setTimeout(r,0));assert.equal(x.$('qTotal').textContent,'7');assert.equal(x.$('qPassed').textContent,'7');
   x.$('qFilter').value='429';x.$('qFilter').dispatchEvent(new x.w.Event('change'));x.$('qCSV').click();const csv=await x.blobText(x.blobs.at(-1));assert.equal(csv.split('\r\n').length,1);
-  x.input('qBase',0);x.$('quotaConfig').dispatchEvent(new x.w.Event('submit',{cancelable:true}));assert.equal(x.$('qTotal').textContent,'0');assert.equal(x.$('qRatio').textContent,'Trafik yok');assert.deepEqual(x.errors,[]);
+  x.input('qBase',0);x.$('quotaConfig').dispatchEvent(new x.w.Event('submit',{cancelable:true}));assert.equal(x.$('qTotal').textContent,'0');assert.equal(x.$('qRatio').textContent,'No traffic');assert.deepEqual(x.errors,[]);
+ }finally{x.w.close();}
+});
+
+test('entire active site is English, including generated labels and validation',()=>{
+ const x=open();try{
+  assert.equal(x.w.document.documentElement.lang,'en');assert(!/[çğıöşüÇĞİÖŞÜ]/.test(html));
+  x.input('traffic','jitter');x.$('quotaTab').click();x.input('qBase','');assert.match(x.$('qError').textContent,/enter an integer/);
+  const copy=x.w.document.body.cloneNode(true);copy.querySelectorAll('script,style').forEach(n=>n.remove());assert(!/\b(istek|kabul|ret|pik|taban|sayfa|saniye|dakika)\b/i.test(copy.textContent));
+  assert.deepEqual(x.errors,[]);
+ }finally{x.w.close();}
+});
+test('Spike Arrest random mode draws per recalculation, fixed mode repeats and New seed preserves mode',async()=>{
+ const x=open();try{
+  x.input('traffic','jitter');assert.equal(x.$('seedMode').value,'random');assert.equal(x.$('seed').readOnly,true);const first=x.$('seed').value;
+  x.input('rate',12);assert.notEqual(x.$('seed').value,first);const drawn=x.$('seed').value;
+  x.input('seedMode','fixed');assert.equal(x.$('seed').value,drawn);assert.equal(x.$('seed').readOnly,false);
+  x.input('seed',1234);const times=x.w.makeTraffic(x.w.read()).map(r=>r.t).join(',');x.input('rate',15);assert.equal(x.$('seed').value,'1234');assert.equal(x.w.makeTraffic(x.w.read()).map(r=>r.t).join(','),times);
+  x.$('newSeed').click();assert.notEqual(x.$('seed').value,'1234');assert.equal(x.$('seedMode').value,'fixed');
+  x.input('seedMode','random');const used=x.$('seed').value;x.$('saveConfig').click();const saved=JSON.parse(await x.blobText(x.blobs.at(-1)));assert.equal(saved.config.seedMode,'fixed');assert.equal(saved.config.seed,Number(used));assert.equal(x.$('seedMode').value,'random');
+  assert.deepEqual(x.errors,[]);
+ }finally{x.w.close();}
+});
+test('quota random mode draws only when run; fixed seeds and exported snapshots are repeatable',async()=>{
+ const x=open();let offline;try{
+  x.$('quotaTab').click();const initial=x.$('qSeed').value;x.input('qBase',100);assert.equal(x.$('qSeed').value,initial);
+  x.$('quotaConfig').dispatchEvent(new x.w.Event('submit',{cancelable:true}));assert.notEqual(x.$('qSeed').value,initial);const random=x.$('qSeed').value;
+  x.input('qSeedMode','fixed');assert.equal(x.$('qSeed').readOnly,false);x.$('quotaConfig').dispatchEvent(new x.w.Event('submit',{cancelable:true}));assert.equal(x.$('qSeed').value,random);
+  const total=x.$('qPassed').textContent;x.$('quotaConfig').dispatchEvent(new x.w.Event('submit',{cancelable:true}));assert.equal(x.$('qPassed').textContent,total);
+  x.$('qNewSeed').click();assert.notEqual(x.$('qSeed').value,random);assert.equal(x.$('qSeedMode').value,'fixed');
+  x.input('qSeedMode','random');x.$('quotaConfig').dispatchEvent(new x.w.Event('submit',{cancelable:true}));const used=x.$('qSeed').value;
+  x.$('qSave').click();const plan=JSON.parse(await x.blobText(x.blobs.at(-1)));assert.equal(plan.config.seedMode,'fixed');assert.equal(plan.config.seed,Number(used));
+  x.$('downloadHtml').click();offline=open(await x.blobText(x.blobs.at(-1)));assert.equal(offline.$('qSeedMode').value,'fixed');assert.equal(offline.$('qSeed').value,used);assert.equal(offline.$('qPassed').textContent,x.$('qPassed').textContent);assert.equal(offline.$('qSeed').readOnly,false);assert.equal(x.$('qSeedMode').value,'random');assert.deepEqual(offline.errors,[]);
+ }finally{x.w.close();offline?.w.close();}
+});
+test('guide chapters, search, navigation, print and examples work',()=>{
+ const x=open();try{
+  x.$('guideTab').click();assert.equal(x.$('userGuide').hidden,false);assert.equal(x.$('spikeLab').hidden,true);assert.equal(x.$('quotaLab').hidden,true);assert.equal(x.$('guideTOC').children.length,16);
+  const links=Array.from(x.$('guideTOC').children);links.forEach(a=>assert(x.w.document.querySelector(a.getAttribute('href'))));
+  assert(x.$('userGuide').textContent.trim().split(/\s+/).length>3500);
+  x.input('guideSearch','monthly reset');assert(links.some(a=>a.hidden));assert(links.some(a=>!a.hidden));
+  x.input('guideSearch','zzznomatchingchapter');assert.equal(x.$('guideEmpty').hidden,false);assert.equal(x.$('guideMatches').textContent,'0 of 16 chapters');
+  x.$('clearGuide').click();assert(links.every(a=>!a.hidden));let printed=false;x.w.print=()=>{printed=true;};x.$('printGuide').click();assert.equal(printed,true);
+  x.w.document.querySelector('[data-guide-example="boundary"]').click();assert.equal(x.$('spikeLab').hidden,false);assert.equal(x.$('passed').textContent,'2');
+  assert.deepEqual(x.errors,[]);
+ }finally{x.w.close();}
+});
+test('guide deep links open the correct workspace and offline snapshots retain the complete guide',async()=>{
+ const x=open(html,'https://example.test/#guide-seeds');let offline;try{
+  assert.equal(x.$('userGuide').hidden,false);assert.equal(x.$('guide-seeds').hidden,false);assert.equal(x.$('guideTab').getAttribute('aria-pressed'),'true');
+  x.$('downloadHtml').click();offline=open(await x.blobText(x.blobs.at(-1)));assert.equal(offline.$('downloadHtml'),null);assert.equal(offline.$('userGuide').hidden,false);assert.equal(offline.$('guideTOC').children.length,16);offline.input('guideSearch','Poisson');assert.equal(offline.$('guideEmpty').hidden,true);assert.deepEqual(offline.errors,[]);
+ }finally{x.w.close();offline?.w.close();}
+});
+test('guide JSON examples load and legacy files default to fixed seeds',()=>{
+ const x=open();try{
+  const examples=Array.from(x.$('guide-saving').querySelectorAll('pre'),n=>JSON.parse(n.textContent));assert.equal(examples.length,2);
+  assert.equal(x.w.validateConfig(examples[0].config).seedMode,'fixed');const q=x.w.qValidate(examples[1].config);assert.equal(x.w.qSimulate(q).rows.filter(r=>r.status===200).length,50);
+  assert.equal(x.w.validateConfig({rate:10}).seedMode,'fixed');assert.equal(x.w.qValidate({base:10}).seedMode,'fixed');
+  assert.throws(()=>x.w.validateConfig({seedMode:'invalid'}));assert.throws(()=>x.w.qValidate({seedMode:'invalid'}));
+  assert.deepEqual(x.errors,[]);
  }finally{x.w.close();}
 });

@@ -1,56 +1,68 @@
-# Apigee Rate Limit Lab
+# API Rate Limit Lab
 
-Türkçe, tek HTML dosyasında çalışan Apigee Spike Arrest ve genel API rate limit simülatörü.
+An English-language, offline, single-HTML simulator for Apigee Spike Arrest, general rate limiting algorithms, multi-window quotas and scheduled peak traffic.
 
-**Yayın:** https://dikeckaan.github.io/ApigeeRateLimitCalculator/
+**Live site:** https://kaandikec.com/ApigeeRateLimitCalculator/
 
-## Kullanım
+**Complete user guide:** https://kaandikec.com/ApigeeRateLimitCalculator/#guide
 
-`index.html` dosyasını herhangi bir modern tarayıcıda açın. Sunucu, kurulum, CDN, API anahtarı veya internet gerekmez. GitHub Pages üzerindeki **HTML indir** düğmesi mevcut ayarlarla tek dosya indirir. İndirilen kopyada bu düğme bulunmaz.
+## Run locally
 
-- Edge smoothing ve X / hybrid ideal sliding window modelleri.
-- Rate (`ps` / `pm`), MP sayısı ve UseEffectiveCount.
-- Sabit aralık, periyodik burst, seed ile jitter, özel zaman damgaları ve başlangıç ofseti.
-- Round-robin, tek MP ve seed ile rastgele MP dağıtımı.
-- İstek bazında 200 / 429, karar nedeni ve hesaplanan bekleme süresi.
-- Zaman dağılımı grafiği, MP yük analizi ve sonuç filtresi.
-- Aynı trafik üzerinde Edge, ortak sliding window, fixed window ve token bucket karşılaştırması.
-- JSON senaryo kaydet/yükle, tüm sonuçları CSV olarak indirme.
+Open `index.html` in a modern browser. No server, installation, API key, CDN or internet connection is required. The application never calls a real API or uploads simulation data.
 
-**Pencere sınırı** örneği: `2ps` ve `998, 999, 1000, 1001 ms` istekleri ile fixed window dört isteği, sliding window iki isteği kabul eder.
+The hosted **Download HTML** button creates a standalone copy containing both workspaces, the complete guide and current settings. Seeds are saved as Fixed for repeatable replay. The downloaded copy does not include the HTML download button; other exports remain available.
 
-## Çoklu kota / pik trafik
+## Spike Arrest / Algorithms
 
-İkinci çalışma alanında saniyelik, dakikalık, saatlik, günlük ve aylık limitler birlikte uygulanır. En fazla 12 kural eklenebilir; kurallar açılıp kapatılabilir. Her kural takvim veya kayan pencere kullanır; ay yalnızca gerçek takvim ayı olabilir.
+- Simplified Edge smoothing and ideal X / hybrid shared sliding-window models.
+- Rate (`ps` / `pm`), Message Processor count and UseEffectiveCount.
+- Steady, periodic burst, jitter and custom timestamp traffic with a start offset.
+- Round-robin, single-MP and seeded random routing.
+- Per-request 200 / 429 results, decision reasons and model wait times.
+- Time histogram, MP load analysis and status filters.
+- Edge, shared sliding window, fixed window and token bucket comparisons on identical traffic.
+- JSON scenario save/load and complete CSV export.
 
-- Tarih aralığı, sabit saat dilimi ofseti ve rastgelelik seed'i.
-- Toplam, dakika/saat/gün başına taban trafik; uniform rastgele veya eşit zaman dağılımı.
-- En fazla 12 pik: her gün, hafta içi, hafta sonu veya belirli bir tarih; başlangıç/bitiş saati ve pik başına ek istek miktarı.
-- Gece yarısını aşan, birbiriyle çakışan ve tarih aralığına kısmen giren pikler.
-- Yalnızca kabul edilenleri veya bütün denemeleri sayma seçimi.
-- Günlük/saatlik grafik, kural bazında darboğaz analizi ve sayfalanmış istek günlüğü.
-- Her 429 için ihlal edilen bütün limitler ve yeni trafik olmadan hesaplanan en erken uygun zaman.
-- Kota planını JSON olarak kaydet/yükle ve filtrelenmiş sonuçların tamamını CSV olarak indirme.
+Try **Window boundary**: at `2ps`, requests at `998, 999, 1000, 1001 ms` produce four accepts in fixed window and two in shared sliding window.
 
-Simülasyon sınırı **100.000 istek / 366 gün**; gizli örnekleme yapılmaz. Bu ekran atomik ortak sayaçlarla çalışan genel bir modeldir; Apigee policy sıralamasını emüle etmez ve Spike Arrest çalışma alanına otomatik zincirlenmez. Takvim pencereleri seçilen sabit ofsetle hizalanır; yaz saati değişimi yoktur. Başlangıçtan önceki trafik bilinmez ve sayaçlar boş kabul edilir.
+## Quotas / Peak traffic
 
-Varsayılan yoğun hafta örneği: günde 2.000 taban istek + 12:00–13:00 arasında 800 + 18:00–18:30 arasında 1.200 ek istek. Yedi günde toplam 28.000 istek, beş aktif limite karşı test edilir.
+Apply up to 12 enabled/disabled limits together, covering seconds, minutes, hours, days and calendar months. Use calendar or sliding windows for each rule; months support actual calendar windows only.
 
-## Model sınırları
+- Date ranges, fixed UTC offsets and random or evenly spaced baseline traffic.
+- Baseline amount as a total or requests per minute/hour/day.
+- Up to 12 peak windows, with additional request amounts and daily, weekday, weekend or specific-date recurrence.
+- Overnight, overlapping and partially included peaks.
+- Count only accepted requests or all attempts, including rejections.
+- Daily/hourly traffic chart, per-rule bottleneck analysis and paginated request log.
+- Every violated limit and earliest availability assuming no new traffic.
+- JSON plan save/load and CSV export of all rows matching the active status filter.
 
-Bu araç Apigee runtime emülatörü veya gerçek yük testi değildir. Canlı API çağrısı yapmaz. 200, isteğin policy kontrolünden geçtiğini belirtir; backend yanıtını tahmin etmez. 429 policy ihlalini temsil eder; özel fault kuralları ve Edge Private Cloud farklı HTTP kodları döndürebilir.
+The default busy-week plan generates **28,000 requests**: 2,000 baseline requests/day, 800 extra requests at 12:00–13:00 and 1,200 at 18:00–18:30, over seven days. Five rules evaluate that traffic.
 
-Edge bir token kapasiteli smoothing yaklaşımıyla modellenir. Gerçek runtime token bucket kapasitesi, burst davranışı ve zaman yuvarlamaları farklı olabilir. X / hybrid tek region içindeki ideal ortak sliding window ile modellenir; dağıtık senkronizasyon gecikmesi yoktur. Tek Identifier, MessageWeight=1, sabit MP sayısı varsayılır. Bu sınırlamalar arayüzde de açıklanır.
+The cap is **100,000 requests / 366 days**, without hidden sampling. All active quota rules are evaluated atomically against one shared counter set. The quota workspace is independent of the Spike Arrest workspace.
 
-Genel karşılaştırma algoritmaları Apigee policy seçenekleri değildir. Fixed window t=0'a hizalıdır; token bucket başlangıçta doludur ve sürekli dolar. Karşılaştırmada bu algoritmaların limiti ortaktır. Edge `UseEffectiveCount=false` ise MP sayısıyla artan nominal toplam limiti ayrıca belirtilir.
+## Random and fixed seeds
 
-## Yedek
+**Random per simulation** is the default for new configurations. A browser-generated seed is visible after each relevant recalculation or quota run. **Fixed / repeatable** enables manual seed entry and keeps traffic stable while comparing configurations. **New seed** draws a fresh value and recalculates while preserving the selected mode.
 
-Geliştirmeden önceki sürüm: [`backups/spike-arrest-v1.html`](backups/spike-arrest-v1.html).
+Switching Random to Fixed retains the displayed seed. Saved JSON and HTML snapshots intentionally use Fixed mode so they reproduce that sample. The live workspace keeps its selected mode. Older v2/v3 JSON files without `seedMode` remain compatible and are interpreted as Fixed.
 
-SHA-256: `226a51538c7472dbac465405247a700a923799695546288b13137841259df081`
+## Detailed user guide
 
-## Geliştirme / test
+The in-app **User guide** includes 16 searchable chapters, a table of contents, direct chapter links, seven worked experiments, JSON examples, a glossary and troubleshooting. It is included in every offline HTML snapshot and has a print layout.
+
+The guide covers every input, request-generation formulas, algorithm boundaries, MP capacity, quota accounting, time zones, calendar months, peak recurrence/proration, seed modes, exports and practical limits. Open `#guide` or a chapter such as `#guide-seeds` on the hosted page.
+
+## Model scope
+
+This is not an Apigee runtime emulator or a load-testing client. A 200 means the model allows a request, not that the backend succeeds. A 429 represents a model violation; actual HTTP responses depend on runtime and fault rules.
+
+Edge uses a simplified one-token smoothing model; real bucket capacity, bursts and rounding can differ. X / hybrid uses an ideal shared window without distributed synchronization delays. The quota planner does not emulate sequential Apigee policy execution, StartTime details or per-Identifier behavior. Fixed time zone offsets do not include daylight saving transitions.
+
+The model assumes no prior traffic, one Identifier, MessageWeight=1 and a fixed MP count. Retries, backend latency, queues and concurrency are outside its scope. Input caps are simulator limits, not published Apigee service limits.
+
+## Tests
 
 Node.js 22.13+:
 
@@ -59,20 +71,19 @@ npm ci
 npm test
 ```
 
-jsdom yalnızca geliştirme testlerinde kullanılır; uygulamanın runtime bağımlılığı yoktur. Testler hesaplama sınırlarını, trafik üretimini, doğrulamayı, CSV/JSON işlemlerini ve indirilen HTML'in iki çalışma alanının ayarlarını koruyarak düğmesiz çalışmasını kapsar. Ay geçişi, artık yıl, üst üste binen / gece yarısını aşan pikler ve çoklu limit sayaçları da test edilir.
+jsdom is a development-only dependency; the deployed application has no runtime dependencies. Tests cover boundary decisions, random traffic, quota accounting, month transitions and leap years, overnight peaks, validation, JSON/CSV exports, offline snapshots, guide navigation/search and seed modes.
 
-GitHub Pages kaynağı: `main` dalı, `/` kök dizini. `.nojekyll` sayesinde statik HTML doğrudan sunulur.
+GitHub Pages publishes the `main` branch at `/`. `.nojekyll` enables direct static-file serving.
 
-## Sonraki araştırma alanları
+## Original backup
 
-- Retry-After, exponential backoff ve jitter ile tekrar deneme simülasyonu.
-- API key / kullanıcı / IP bazlı ve toplam servis limitlerinin birlikte modellenmesi.
-- Anonimleştirilmiş gateway loglarının replay edilmesi ve gerçek kararlarla kıyaslanması.
-- Backend yanıt süresi, eşzamanlılık ve kuyruk kapasitesi simülasyonu.
+The original pre-development file is preserved unchanged at [`backups/spike-arrest-v1.html`](backups/spike-arrest-v1.html), including its original language.
 
-## Kaynaklar
+SHA-256: `226a51538c7472dbac465405247a700a923799695546288b13137841259df081`
+
+## References
 
 - [Apigee Edge SpikeArrest](https://docs.apigee.com/api-platform/reference/policies/spike-arrest-policy)
 - [Apigee X / hybrid SpikeArrest](https://docs.cloud.google.com/apigee/docs/api-platform/reference/policies/spike-arrest-policy)
 - [Apigee Quota policy](https://docs.cloud.google.com/apigee/docs/api-platform/reference/policies/quota-policy)
-- [Redis rate limiting algoritmaları](https://redis.io/tutorials/howtos/ratelimiting/)
+- [General rate limiting algorithms](https://redis.io/tutorials/howtos/ratelimiting/)
