@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Çevrimdışı Apigee Spike Arrest istek simülatörü">
+<title>Spike Arrest · İstek simülatörü</title>
+<style>
+:root{color-scheme:dark;--bg:#101315;--panel:#191e21;--line:#30383c;--text:#eef2f0;--muted:#a1aeaf;--green:#a9ef75;--red:#ff938e}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.6 system-ui,-apple-system,sans-serif}main{max-width:1440px;margin:auto;padding:30px 40px}header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:24px;margin-bottom:28px}.brand{font-size:13px;letter-spacing:2px;text-transform:uppercase}.mark{color:var(--green);margin-right:12px;font-size:22px}.offline{color:var(--green);font-size:12px;border:1px solid #46563c;border-radius:20px;padding:5px 12px}h1{font-size:32px;letter-spacing:-1px;margin:0}h2{font-size:17px;margin:0}p{color:var(--muted);margin:6px 0 20px}.intro{margin-bottom:25px}.layout{display:grid;grid-template-columns:310px minmax(0,1fr);gap:24px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px}.step{color:var(--green);font:12px ui-monospace,monospace;display:block;margin-bottom:8px}label{display:block;font-size:12px;color:#c2cdcf;margin:17px 0 6px}input,select,button{font:inherit}input,select{width:100%;background:#101517;color:var(--text);border:1px solid #3a454a;border-radius:7px;padding:10px 11px;min-width:0}input:focus,select:focus,button:focus-visible,summary:focus-visible{outline:2px solid var(--green);outline-offset:3px}.row{display:flex;gap:8px}.row input{width:60%}.row select{width:40%}.hint{font-size:12px;color:var(--muted);margin-top:6px}button{cursor:pointer;border:1px solid #445047;background:transparent;color:var(--text);border-radius:7px;padding:8px 12px}button:hover{background:#303b31}.presets{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}.presets button{font-size:11px;padding:5px 8px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}.stat{padding:18px 20px}.stat small{color:var(--muted)}.stat strong{display:block;font:36px/1.5 ui-monospace,monospace;letter-spacing:-2px}.good{color:var(--green)}.bad{color:var(--red)}.formula{border-left:2px solid var(--green);padding:9px 14px;background:#222d24;margin:0 0 18px;font-size:13px}.headrow{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:16px}.legend{font-size:12px;color:var(--muted)}.timeline{display:flex;gap:5px;flex-wrap:wrap;max-height:210px;overflow:auto;padding:5px 2px}.dot{width:32px;height:30px;padding:0;font:10px ui-monospace,monospace;border-radius:4px;background:#283d24;border:1px solid #577a40;color:var(--green)}.dot.reject{background:#422a29;border-color:#81504e;color:var(--red)}.dot.selected{outline:2px solid white;outline-offset:1px}.detail{margin:16px 0 0;min-height:45px;font:12px/1.7 ui-monospace,monospace;color:#ccd5d3}.tablepanel{margin-top:18px}.tablewrap{overflow:auto;max-height:380px}table{width:100%;border-collapse:collapse;white-space:nowrap;font:12px/1.6 ui-monospace,monospace}th{text-align:left;color:var(--muted);font-weight:400;position:sticky;top:0;background:var(--panel)}td,th{padding:11px 12px;border-bottom:1px solid var(--line)}td:last-child{white-space:normal;min-width:220px}.badge{display:inline-block;border-radius:4px;padding:2px 7px;background:#273626}.badge.bad{background:#3d2929}.filter{width:150px;padding:6px}.foot{font-size:12px;color:var(--muted);margin-top:24px}.foot p{margin:10px 0}.foot a{color:#c7dbb6}summary{cursor:pointer;color:var(--text)}pre{padding:14px;background:#101517;border:1px solid var(--line);border-radius:8px;overflow:auto;font-size:12px}#error{color:var(--red);margin:16px 0}#results[hidden]{display:none}@media(max-width:850px){main{padding:20px}.layout{grid-template-columns:1fr}.controls{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}.controls>h2,.controls>.step,.controls>.presets,.controls>.hint{grid-column:1/-1}.stats{gap:8px}.stat{padding:12px}.stat strong{font-size:28px}h1{font-size:27px}}@media(max-width:450px){.controls{display:block}.headrow{flex-wrap:wrap}main{padding:14px}.panel{padding:16px}.brand{letter-spacing:1px;font-size:11px}.offline{font-size:10px}}
+</style>
+</head>
+<body><main>
+<header><div class="brand"><span class="mark">↯</span> API TRAFFIC LAB</div><span class="offline">● Tamamen çevrimdışı</span></header>
+<div class="intro"><h1>Spike Arrest hesaplayıcısı</h1><p>Rate’i ayarlayın. Trafiği dağıtın. Hangi isteğin geçeceğini görün.</p></div>
+<div class="layout">
+<form class="panel controls" id="config" novalidate>
+<span class="step">01 / KONFİGÜRASYON</span><h2>Trafik senaryosu</h2>
+<div><label for="model">Apigee modeli</label><select id="model"><option value="edge">Edge · smoothing modeli</option><option value="x">X / hybrid · sliding window</option></select></div>
+<div><label for="rate">Spike Arrest rate</label><div class="row"><input id="rate" type="number" min="1" max="1000000" step="1" value="10"><select id="unit" aria-label="Rate birimi"><option value="ps">ps / saniye</option><option value="pm">pm / dakika</option></select></div></div>
+<div><label for="mps">Message Processor sayısı</label><input id="mps" type="number" min="1" max="1000" step="1" value="2"></div>
+<div><label for="effective">UseEffectiveCount</label><select id="effective"><option value="true">true · Rate MP’ler arasında paylaşılır</option><option value="false">false · Her MP’ye ayrı rate</option></select></div>
+<div><label for="interval">Request interval (ms)</label><input id="interval" type="number" min="0" max="3600000" step="any" value="50"><div class="hint">Ardışık istekler arası süre. 0 = eşzamanlı burst.</div></div>
+<div><label for="count">İstek sayısı</label><input id="count" type="number" min="1" max="10000" step="1" value="40"></div>
+<div><label for="routing">MP dağıtımı</label><select id="routing"><option value="round">Round-robin · Sırayla</option><option value="single">Tüm istekler MP 1’e</option><option value="random">Rastgele · Sabit seed 42</option></select></div>
+<div class="presets"><button type="button" data-preset="edge">10ps / 2 MP</button><button type="button" data-preset="minute">30pm / 1 MP</button><button type="button" data-preset="burst">X / burst</button></div>
+<div class="hint">Değişiklikler anında hesaplanır.</div>
+</form>
+<div><div id="error" role="alert" hidden></div><div id="results">
+<div class="stats" aria-live="polite"><div class="panel stat"><small>Toplam istek</small><strong id="total">—</strong><small id="duration"></small></div><div class="panel stat"><small>200 · Geçen</small><strong class="good" id="passed">—</strong><small id="percent"></small></div><div class="panel stat"><small>429 · Engellenen</small><strong class="bad" id="blocked">—</strong><small>SpikeArrestViolation</small></div></div>
+<div class="formula" id="formula"></div>
+<section class="panel"><div class="headrow"><div><span class="step">02 / İSTEK AKIŞI</span><h2>İstek sırası</h2></div><div class="legend"><span class="good">■ 200</span> &nbsp; <span class="bad">■ 429</span></div></div><div class="timeline" id="timeline" aria-label="İstek sonuçları"></div><div class="hint" id="timelineHint"></div><div class="detail" id="detail" aria-live="polite">Detay için bir isteğe tıklayın.</div></section>
+<section class="panel tablepanel"><div class="headrow"><h2>İstek günlüğü</h2><div class="row"><select id="filter" class="filter" aria-label="Sonuç filtresi"><option value="all">Tüm sonuçlar</option><option value="200">Yalnızca 200</option><option value="429">Yalnızca 429</option></select><button type="button" id="csv">CSV indir ↓</button></div></div><div class="tablewrap"><table><thead><tr><th>İstek</th><th>Zaman (ms)</th><th>MP</th><th>Sonuç</th><th>Karar nedeni</th></tr></thead><tbody id="rows"></tbody></table></div><div class="hint" id="tableHint"></div></section>
+</div></div></div>
+<section class="panel foot"><details open><summary>Model, varsayımlar ve policy XML</summary>
+<p>Bu araç deterministik bir simülasyondur; canlı Apigee sonucunun garantisi değildir. İlk istek t=0’da gelir, sayaçlar boştur, tek region / pod ve tek Identifier kullanılır. MessageWeight=1, enabled=true ve continueOnError=false kabul edilir. “200”, Spike Arrest’tan geçen isteği temsil eder; backend’in gerçek HTTP yanıtını tahmin etmez. “429”, policy ihlalidir; Edge Private Cloud veya özel fault kuralları farklı HTTP kodu döndürebilir.</p>
+<p><b>Edge:</b> Her MP’de son kabulden itibaren minimum aralık uygulanır; eşikteki istek kabul edilir, ret süreyi uzatmaz. UseEffectiveCount=true ise MP başına rate=rate/MP, false ise rate’tir. Bu, bir token kapasiteli basitleştirilmiş smoothing modelidir. Gerçek sürümün token bucket kapasitesi, burst davranışı ve zaman yuvarlaması farklı sonuç üretebilir; özellikle yüksek rate’lerde birebir emülasyon değildir.</p>
+<p><b>X / hybrid:</b> UseEffectiveCount=true ile MP’ler arasında ortak, ideal kayan pencere modellenir. Son 1 saniye veya 1 dakikada kabul edilen istekler sayılır; (t−pencere, t] sınırı kullanılır. MP sayısı ortak limiti çarpmaz. Dağıtık senkronizasyon gecikmeleri modellenmez. Üretim için desteklenmeyen false seçeneği bu modelde kapalıdır.</p>
+<pre id="xml"></pre><p>Kaynaklar (09.09.2026): <a href="https://docs.apigee.com/api-platform/reference/policies/spike-arrest-policy" target="_blank" rel="noopener noreferrer">Apigee Edge SpikeArrest</a> · <a href="https://docs.cloud.google.com/apigee/docs/api-platform/reference/policies/spike-arrest-policy" target="_blank" rel="noopener noreferrer">Apigee X / hybrid SpikeArrest</a>. Hesaplama internete bağlanmaz; bağlantılar yalnızca tıklarsanız açılır.</p>
+</details></section>
+</main>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const fmt=n=>Number.isFinite(n)?new Intl.NumberFormat('tr-TR',{maximumFractionDigits:4}).format(n):'—';
+function simulate(c){
+ const period=c.unit==='ps'?1000:60000, gap=period/c.rate*(c.effective?c.mps:1);
+ const next=Array(c.mps).fill(0),accepted=[];let head=0,seed=42;const rows=[];
+ for(let i=0;i<c.count;i++){
+  const t=i*c.interval;let mp=0;
+  if(c.routing==='round')mp=i%c.mps;
+  if(c.routing==='random'){seed=(Math.imul(1664525,seed)+1013904223)>>>0;mp=Math.floor(seed/4294967296*c.mps);}
+  let ok,wait=0,reason;
+  if(c.model==='x'){
+   while(head<accepted.length&&accepted[head]<=t-period+1e-8)head++;
+   const used=accepted.length-head;ok=used<c.rate;
+   if(ok){accepted.push(t);reason=`Ortak pencere: ${used+1}/${c.rate} istek.`;}
+   else{wait=accepted[head]+period-t;reason=`Ortak pencere dolu; ${fmt(wait)} ms sonra yer açılır.`;}
+  }else{
+   ok=t+1e-8>=next[mp];wait=ok?0:next[mp]-t;
+   reason=ok?`MP ${mp+1} hazır; sonraki kabul ≥ ${fmt(t+gap)} ms.`:`MP ${mp+1} için ${fmt(wait)} ms erken; kabul ≥ ${fmt(next[mp])} ms.`;
+   if(ok)next[mp]=t+gap;
+  }
+  rows.push({id:i+1,t,mp:mp+1,status:ok?200:429,wait,reason});
+ }
+ return {rows,gap,period};
+}
+let current=null;
+function read(){
+ const c={model:$('model').value,unit:$('unit').value,effective:$('effective').value==='true',routing:$('routing').value};
+ for(const [id,min,max,integer] of [['rate',1,1000000,true],['mps',1,1000,true],['interval',0,3600000,false],['count',1,10000,true]]){
+  const input=$(id),n=Number(input.value);const valid=input.value.trim()!==''&&Number.isFinite(n)&&n>=min&&n<=max&&(!integer||Number.isInteger(n));input.setAttribute('aria-invalid',String(!valid));
+  if(!valid)throw Error(`${input.labels[0].textContent}: ${min}–${max} arasında ${integer?'tam sayı':'bir sayı'} girin.`);c[id]=n;
+ }
+ return c;
+}
+function renderTable(){
+ if(!current)return;const filtered=current.rows.filter(r=>$('filter').value==='all'||String(r.status)===$('filter').value);
+ $('rows').innerHTML=filtered.slice(0,1000).map(r=>`<tr><td>#${r.id}</td><td>${fmt(r.t)}</td><td>MP ${r.mp}</td><td><span class="badge ${r.status===200?'good':'bad'}">${r.status}</span></td><td>${r.reason}</td></tr>`).join('');
+ $('tableHint').textContent=filtered.length?`${fmt(filtered.length)} sonuç${filtered.length>1000?' · İlk 1.000 gösteriliyor; CSV tüm istekleri içerir.':''}`:'Bu filtrede istek yok.';
+}
+function update(){
+ const isX=$('model').value==='x';$('effective').disabled=isX;if(isX)$('effective').value='true';
+ try{
+  const c=read();current=simulate(c);$('error').hidden=true;$('results').hidden=false;
+  const passed=current.rows.filter(r=>r.status===200).length;
+  $('total').textContent=fmt(c.count);$('passed').textContent=fmt(passed);$('blocked').textContent=fmt(c.count-passed);$('percent').textContent=`%${fmt(passed/c.count*100)} kabul oranı`;$('duration').textContent=`${fmt((c.count-1)*c.interval)} ms zaman aralığı`;
+  $('formula').textContent=isX?`Ortak limit: ${c.rate}${c.unit} · Kayan pencere: ${fmt(current.period)} ms · ${c.mps} MP aynı sayacı paylaşır.`:`MP başına ${fmt(c.rate/(c.effective?c.mps:1))}${c.unit} → minimum aralık ${fmt(current.gap)} ms · Toplam nominal limit ${fmt(c.rate*(c.effective?1:c.mps))}${c.unit}`;
+  $('timeline').innerHTML=current.rows.slice(0,500).map(r=>`<button type="button" class="dot ${r.status===429?'reject':''}" data-id="${r.id}" aria-label="İstek ${r.id}, ${fmt(r.t)} ms, MP ${r.mp}, ${r.status}" title="#${r.id} · ${fmt(r.t)} ms · MP ${r.mp} · ${r.status}">${r.id}</button>`).join('');
+  $('timelineHint').textContent=c.count>500?'İlk 500 istek gösteriliyor. Tam sonuçlar CSV dosyasında.':'Soldan sağa istek sırası; kutu aralıkları zamanı temsil etmez.';
+  $('detail').textContent='Detay için bir isteğe tıklayın.';
+  $('xml').textContent=`<SpikeArrest name="SA-Traffic" enabled="true" continueOnError="false">\n  <Rate>${c.rate}${c.unit}</Rate>\n  <UseEffectiveCount>${c.effective}</UseEffectiveCount>\n</SpikeArrest>`;renderTable();
+ }catch(e){current=null;$('error').textContent=e.message;$('error').hidden=false;$('results').hidden=true;$('xml').textContent='Geçerli konfigürasyon girin.';}
+}
+$('config').addEventListener('submit',e=>e.preventDefault());$('config').addEventListener('input',update);$('filter').addEventListener('change',renderTable);
+$('timeline').addEventListener('click',e=>{const b=e.target.closest('[data-id]');if(!b||!current)return;const r=current.rows[Number(b.dataset.id)-1];document.querySelectorAll('.dot.selected').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');$('detail').textContent=`#${r.id} · t=${fmt(r.t)} ms · MP ${r.mp} → ${r.status} | ${r.reason}`;});
+document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{const presets={edge:['edge',10,'ps',2,'true',50,40],minute:['edge',30,'pm',1,'false',500,20],burst:['x',10,'ps',3,'true',0,20]};const values=presets[b.dataset.preset];['model','rate','unit','mps','effective','interval','count'].forEach((id,i)=>$(id).value=values[i]);$('routing').value='round';update();}));
+$('csv').addEventListener('click',()=>{if(!current)return;const lines=['request,time_ms,mp,status,wait_ms,reason',...current.rows.map(r=>[r.id,r.t,r.mp,r.status,r.wait,'"'+r.reason.replaceAll('"','""')+'"'].join(','))];const url=URL.createObjectURL(new Blob(['\ufeff'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download='spike-arrest-results.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
+update();
+</script></body></html>
