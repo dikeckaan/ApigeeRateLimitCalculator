@@ -208,16 +208,3 @@ test('source plan and chained destination survive offline HTML and scenario expo
 test('invalid source rules cannot transfer or export a stale plan',()=>{
  const x=open();try{const f=x.$('planRules').querySelector('[data-field="limit"]');f.value='0';f.dispatchEvent(new x.w.Event('input',{bubbles:true}));assert.equal(x.$('pTransfer').disabled,true);x.$('saveConfig').click();assert.equal(x.downloads.length,0);assert.match(x.$('notice').textContent,/Limit 1/);assert.deepEqual(x.errors,[]);}finally{x.w.close();}
 });
-test('combined log identifies stages, filters without changing the seed, and exports all pages',async()=>{
- const x=open();try{
- x.input('seedMode','fixed');x.input('rate',1000);x.input('mps',1);x.input('interval',10);x.input('count',240);
- for(const row of x.$('planRules').children)row.querySelector('[data-field="enabled"]').checked=false;
- const row=x.$('planRules').children[1];row.querySelector('[data-field="enabled"]').checked=true;row.querySelector('[data-field="limit"]').value='2';row.dispatchEvent(new x.w.Event('input',{bubbles:true}));
- assert.equal(x.$('pRows').children.length,100);assert.match(x.$('pRows').children[2].textContent,/Rule 2: 2 \/ hour/);
- const seed=x.$('seed').value;x.input('pFilter','quota');x.$('pFilter').dispatchEvent(new x.w.Event('change'));assert.match(x.$('pPageInfo').textContent,/238 results/);assert.equal(x.$('seed').value,seed);
- x.$('pNext').click();assert.match(x.$('pPageInfo').textContent,/Page 2 \/ 3/);x.$('pCSV').click();const csv=await x.blobText(x.blobs.at(-1));assert.equal(csv.trim().split('\r\n').length,239);assert.match(csv,/Rule 2: 2 \/ hour/);assert.equal(x.downloads.at(-1).name,'combined-limit-results.csv');
- x.input('pFilter','spike');x.$('pFilter').dispatchEvent(new x.w.Event('change'));assert.match(x.$('pRows').textContent,/No matching/);
- x.input('rate',1);assert.match(x.$('pRows').textContent,/Spike Arrest rejected; quotas not evaluated/);
- x.input('rate',0);assert.equal(x.$('pResults').hidden,true);const n=x.downloads.length;x.$('pCSV').click();assert.equal(x.downloads.length,n);assert.equal(x.$('pRows').children.length,0);assert.deepEqual(x.errors,[]);
- }finally{x.w.close();}
-});

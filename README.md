@@ -112,7 +112,3 @@ Edge Private Cloud is the primary/default product. The first workspace includes 
 SpikeArrest Rate remains ps/pm; longer periods are separate quota rules. Shared second-window quotas are a generic planning model (Edge second quotas do not support distributed counters). The planner does not emulate full sequential Edge Quota flows, synchronization or StartTime semantics. Source scenario JSON, destination plan JSON and the offline HTML preserve the new settings.
 
 Pre-change backup: `backups/rate-limit-lab-v3.2.html`.
-
-### Combined request inspection (v3.4)
-
-The source limit plan includes a paginated combined request log with MP, timestamp, status and numbered quota violations. Filter accepted traffic, upstream Spike Arrest rejections or downstream quota rejections without generating new traffic. The combined CSV exports all matching rows across pages. Invalid input clears the results and prevents stale exports.
