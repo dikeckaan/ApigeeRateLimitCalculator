@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Çevrimdışı Apigee Spike Arrest, çoklu kota ve pik trafik simülatörü">
+<title>API Rate Limit Lab · Apigee, çoklu kota ve pik trafik</title>
+<style>
+:root{color-scheme:dark;--bg:#101315;--panel:#191e21;--line:#30383c;--text:#eef2f0;--muted:#a1aeaf;--green:#a9ef75;--red:#ff938e}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.6 system-ui,-apple-system,sans-serif}main{max-width:1440px;margin:auto;padding:30px 40px}header{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line);padding-bottom:24px;margin-bottom:28px}.brand{font-size:13px;letter-spacing:2px;text-transform:uppercase}.mark{color:var(--green);margin-right:12px;font-size:22px}.offline{color:var(--green);font-size:12px;border:1px solid #46563c;border-radius:20px;padding:5px 12px}h1{font-size:32px;letter-spacing:-1px;margin:0}h2{font-size:17px;margin:0}p{color:var(--muted);margin:6px 0 20px}.intro{margin-bottom:25px}.layout{display:grid;grid-template-columns:310px minmax(0,1fr);gap:24px}.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px}.step{color:var(--green);font:12px ui-monospace,monospace;display:block;margin-bottom:8px}label{display:block;font-size:12px;color:#c2cdcf;margin:17px 0 6px}input,select,button{font:inherit}input,select{width:100%;background:#101517;color:var(--text);border:1px solid #3a454a;border-radius:7px;padding:10px 11px;min-width:0}input:focus,select:focus,button:focus-visible,summary:focus-visible{outline:2px solid var(--green);outline-offset:3px}.row{display:flex;gap:8px}.row input{width:60%}.row select{width:40%}.hint{font-size:12px;color:var(--muted);margin-top:6px}button{cursor:pointer;border:1px solid #445047;background:transparent;color:var(--text);border-radius:7px;padding:8px 12px}button:hover{background:#303b31}.presets{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}.presets button{font-size:11px;padding:5px 8px}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}.stat{padding:18px 20px}.stat small{color:var(--muted)}.stat strong{display:block;font:36px/1.5 ui-monospace,monospace;letter-spacing:-2px}.good{color:var(--green)}.bad{color:var(--red)}.formula{border-left:2px solid var(--green);padding:9px 14px;background:#222d24;margin:0 0 18px;font-size:13px}.headrow{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:16px}.legend{font-size:12px;color:var(--muted)}.timeline{display:flex;gap:5px;flex-wrap:wrap;max-height:210px;overflow:auto;padding:5px 2px}.dot{width:32px;height:30px;padding:0;font:10px ui-monospace,monospace;border-radius:4px;background:#283d24;border:1px solid #577a40;color:var(--green)}.dot.reject{background:#422a29;border-color:#81504e;color:var(--red)}.dot.selected{outline:2px solid white;outline-offset:1px}.detail{margin:16px 0 0;min-height:45px;font:12px/1.7 ui-monospace,monospace;color:#ccd5d3}.tablepanel{margin-top:18px}.tablewrap{overflow:auto;max-height:380px}table{width:100%;border-collapse:collapse;white-space:nowrap;font:12px/1.6 ui-monospace,monospace}th{text-align:left;color:var(--muted);font-weight:400;position:sticky;top:0;background:var(--panel)}td,th{padding:11px 12px;border-bottom:1px solid var(--line)}td:last-child{white-space:normal;min-width:220px}.badge{display:inline-block;border-radius:4px;padding:2px 7px;background:#273626}.badge.bad{background:#3d2929}.filter{width:150px;padding:6px}.foot{font-size:12px;color:var(--muted);margin-top:24px}.foot p{margin:10px 0}.foot a{color:#c7dbb6}summary{cursor:pointer;color:var(--text)}pre{padding:14px;background:#101517;border:1px solid var(--line);border-radius:8px;overflow:auto;font-size:12px}#error{color:var(--red);margin:16px 0}#results[hidden]{display:none}@media(max-width:850px){main{padding:20px}.layout{grid-template-columns:1fr}.controls{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}.controls>h2,.controls>.step,.controls>.presets,.controls>.hint{grid-column:1/-1}.stats{gap:8px}.stat{padding:12px}.stat strong{font-size:28px}h1{font-size:27px}}@media(max-width:450px){.controls{display:block}.headrow{flex-wrap:wrap}main{padding:14px}.panel{padding:16px}.brand{letter-spacing:1px;font-size:11px}.offline{font-size:10px}}
+
+[hidden]{display:none!important}.subtle{color:#98a8a6;font-weight:400}.version{font:10px ui-monospace,monospace;letter-spacing:1px;margin-left:12px;color:var(--green)}textarea{width:100%;resize:vertical;min-height:95px;color:var(--text);background:#101517;border:1px solid #3a454a;border-radius:7px;padding:10px;font:12px/1.6 ui-monospace,monospace}textarea:focus{outline:2px solid var(--green);outline-offset:3px}.chartpanel{margin-bottom:18px}.chartpanel svg{width:100%;height:auto;display:block}.mp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;max-height:290px;overflow:auto}.mp-card{border:1px solid var(--line);border-radius:8px;padding:12px;font-size:12px}.mp-card b{font-family:ui-monospace,monospace}.mp-card p{margin:5px 0}.meter{height:5px;background:#452e2c;border-radius:4px;overflow:hidden}.meter span{display:block;height:100%;background:var(--green)}.insight{padding:12px 14px;margin-top:15px;border-left:2px solid #91b4c9;background:#202c32;color:#c8dae6;font-size:12px}.scenario-actions{display:flex;gap:7px;margin-top:18px;grid-column:1/-1}.scenario-actions button{font-size:11px;flex:1}.ideas{display:grid;grid-template-columns:1fr 1fr;gap:10px 30px;margin-top:18px}.ideas b{color:var(--green)}#notice{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#d9f5c6;color:#1a2a14;border-radius:8px;padding:10px 18px;max-width:90%;box-shadow:0 6px 30px #0005;z-index:5}#notice:empty{display:none}input[aria-invalid=true],textarea[aria-invalid=true]{border-color:var(--red)}@media(min-width:851px){.controls{align-self:start}}@media(max-width:550px){.subtle{display:block;font-size:20px}.version{display:block;margin:8px 0}.ideas{grid-template-columns:1fr}}
+
+.lab-tabs{display:flex;gap:8px;border-bottom:1px solid var(--line);margin-bottom:26px;padding-bottom:12px;flex-wrap:wrap}.lab-tabs button{border-color:transparent;color:var(--muted);padding:10px 16px}.lab-tabs .active{color:var(--green);background:#283324;border-color:#465d38}.lab-tabs span{font-size:9px;letter-spacing:1px;color:var(--green);margin-left:8px}.quota-intro,.quota-run,.quota-result-head,.quota-pager{display:flex;justify-content:space-between;align-items:center;gap:16px}.quota-intro{margin-bottom:20px}.quota-intro p{margin-bottom:0}.quota-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:18px}.quota-options{display:grid;grid-template-columns:1fr 1fr;gap:16px}.quota-rule,.rule-labels{display:grid;grid-template-columns:45px 1fr 1fr 1.5fr 40px;gap:10px;align-items:center}.quota-rule{margin:8px 0}.rule-labels{font-size:11px;color:var(--muted)}.quota-rule input[type=checkbox]{width:18px;height:18px;accent-color:var(--green);margin:0 10px}.remove-row{border-color:#5b3a39;color:var(--red);padding:8px 0}.peak-row{border:1px solid var(--line);border-radius:9px;padding:14px;margin-bottom:10px}.peak-head{display:flex;justify-content:space-between;align-items:center}.peak-head button{padding:3px 9px}.peak-fields{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}.peak-fields label{margin-top:10px}.quota-run{margin:22px 0}.primary{background:var(--green);color:#1b2b10;font-weight:650;border-color:var(--green);padding:12px 20px}.primary:hover{background:#bffb92}.quota-result-head{margin:20px 0 14px}#qStale{color:#ffd089;font-size:12px}#qError{padding:12px 16px;color:var(--red);border:1px solid #5b3a39;border-radius:8px;margin-bottom:20px}.quota-chart{overflow-x:auto}.quota-chart svg{display:block;width:100%;min-width:620px;height:210px}.quota-pager{font-size:12px;color:var(--muted);margin-top:15px}.quota-pager button:disabled{opacity:.4;cursor:default}.quota-log-actions{display:flex;gap:8px}.quota-rule input,.quota-rule select{padding:8px}.quota-run b{font-size:14px}@media(max-width:760px){.quota-grid{grid-template-columns:1fr}.quota-rule,.rule-labels{grid-template-columns:28px 1fr 1fr 1.3fr 30px;gap:5px}.quota-rule select,.quota-rule input{font-size:11px;padding:8px 5px}.quota-rule input[type=checkbox]{margin:0}.quota-options{grid-template-columns:1fr}.quota-intro,.quota-run{align-items:flex-start;flex-direction:column}.lab-tabs button{font-size:12px;padding:9px 10px}.quota-result-head{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body><main>
+<header><div class="brand"><span class="mark">↯</span> API TRAFFIC LAB</div><button type="button" class="offline" id="downloadHtml" data-online-only title="Ayarlarınızla birlikte tek HTML dosyası indir">↓ HTML indir</button></header>
+<div class="intro"><h1>API Rate Limit Lab <span class="subtle">/ Apigee</span></h1><p>Trafiği tasarlayın. Limitleri karşılaştırın. 429’un nedenini görün. <span class="version">v3 · OFFLINE READY</span></p></div>
+<nav class="lab-tabs" aria-label="Çalışma alanı"><button type="button" id="spikeTab" class="active" aria-pressed="true">Spike Arrest / Algoritmalar</button><button type="button" id="quotaTab" aria-pressed="false">Çoklu kota / Pik trafik <span>YENİ</span></button></nav>
+<section id="spikeLab">
+<div class="layout">
+<form class="panel controls" id="config" novalidate>
+<span class="step">01 / KONFİGÜRASYON</span><h2>Trafik senaryosu</h2>
+<div><label for="model">Apigee modeli</label><select id="model"><option value="edge">Edge · smoothing modeli</option><option value="x">X / hybrid · sliding window</option></select></div>
+<div><label for="rate">Spike Arrest rate</label><div class="row"><input id="rate" type="number" min="1" max="1000000" step="1" value="10"><select id="unit" aria-label="Rate birimi"><option value="ps">ps / saniye</option><option value="pm">pm / dakika</option></select></div></div>
+<div><label for="mps">Message Processor sayısı</label><input id="mps" type="number" min="1" max="1000" step="1" value="2"></div>
+<div><label for="effective">UseEffectiveCount</label><select id="effective"><option value="true">true · Rate MP’ler arasında paylaşılır</option><option value="false">false · Her MP’ye ayrı rate</option></select></div>
+<div><label for="traffic">Trafik profili</label><select id="traffic"><option value="steady">Sabit aralıklı</option><option value="burst">Periyodik burst</option><option value="jitter">Jitter · Değişken aralık</option><option value="custom">Özel zaman damgaları</option></select></div>
+<div id="standardFields"><label for="interval">Request interval (ms)</label><input id="interval" type="number" min="0" max="3600000" step="any" value="50"><div class="hint">Ardışık istekler arası süre. 0 = eşzamanlı burst.</div></div>
+<div id="countField"><label for="count">İstek sayısı</label><input id="count" type="number" min="1" max="10000" step="1" value="40"></div>
+<div id="burstField" hidden><label for="burstSize">Burst başına istek</label><input id="burstSize" type="number" min="1" max="10000" value="5"><div class="hint">Her burst’te aynı anda bu kadar istek; interval burst’ler arası süredir.</div></div>
+<div id="jitterField" hidden><label for="jitter">Jitter (± %)</label><input id="jitter" type="number" min="0" max="100" value="50"><div class="hint">Aralık, seçilen yüzde içinde seed’e göre değişir.</div></div>
+<div id="customField" hidden><label for="timestamps">Zaman damgaları (ms)</label><textarea id="timestamps" rows="4" spellcheck="false">0, 100, 200, 900, 999, 1000, 1001, 1100</textarea><div class="hint">Virgül, boşluk veya yeni satırla ayırın. Ondalık için nokta kullanın. Zamanlar sıralanır; tekrarlar eşzamanlı istek olur. En fazla 10.000.</div></div>
+<div><label for="start">Başlangıç ofseti (ms)</label><input id="start" type="number" min="0" max="3600000" step="any" value="0"><div class="hint">Tüm zamanlara eklenir. Pencere sınırlarını denemek için kullanın.</div></div>
+<div><label for="routing">MP dağıtımı</label><select id="routing"><option value="round">Round-robin · Sırayla</option><option value="single">Tüm istekler MP 1’e</option><option value="random">Rastgele · Seed ile</option></select></div>
+<div id="seedField" hidden><label for="seed">Rastgelelik seed’i</label><input id="seed" type="number" min="0" max="4294967295" step="1" value="42"><div class="hint">Aynı seed, aynı trafik ve MP dağıtımını üretir.</div></div>
+<div><label for="capacity">Karşılaştırma · Bucket kapasitesi</label><input id="capacity" type="number" min="1" max="1000000" value="10"><div class="hint">Yalnızca genel token bucket karşılaştırmasında kullanılır.</div></div>
+<div class="presets"><button type="button" data-preset="edge">10ps / 2 MP</button><button type="button" data-preset="minute">30pm / 1 MP</button><button type="button" data-preset="burst">X / burst</button><button type="button" data-preset="boundary">Pencere sınırı</button></div>
+<div class="hint">Değişiklikler anında hesaplanır. Gerçek API çağrısı yapılmaz.</div><div class="scenario-actions"><button type="button" id="saveConfig">Senaryoyu kaydet</button><button type="button" id="loadConfig">Senaryo aç</button><input id="configFile" type="file" accept=".json,application/json" hidden></div>
+</form>
+<div><div id="error" role="alert" hidden></div><div id="results">
+<div class="stats" aria-live="polite"><div class="panel stat"><small>Toplam istek</small><strong id="total">—</strong><small id="duration"></small></div><div class="panel stat"><small>200 · Geçen</small><strong class="good" id="passed">—</strong><small id="percent"></small></div><div class="panel stat"><small>429 · Engellenen</small><strong class="bad" id="blocked">—</strong><small>SpikeArrestViolation</small></div></div>
+<div class="formula" id="formula"></div>
+<section class="panel chartpanel"><div class="headrow"><div><span class="step">02 / ZAMAN İÇİNDE TRAFİK</span><h2>Kabul ve ret dağılımı</h2></div><div class="legend"><span class="good">■ 200</span> &nbsp; <span class="bad">■ 429</span></div></div><div id="chart"></div><div class="hint" id="chartHint"></div></section>
+<section class="panel flowpanel"><div class="headrow"><div><span class="step">03 / İSTEK AKIŞI</span><h2>İstek sırası</h2></div><div class="legend"><span class="good">■ 200</span> &nbsp; <span class="bad">■ 429</span></div></div><div class="timeline" id="timeline" aria-label="İstek sonuçları"></div><div class="hint" id="timelineHint"></div><div class="detail" id="detail" aria-live="polite">Detay için bir isteğe tıklayın.</div></section>
+<section class="panel tablepanel"><div class="headrow"><h2>İstek günlüğü</h2><div class="row"><select id="filter" class="filter" aria-label="Sonuç filtresi"><option value="all">Tüm sonuçlar</option><option value="200">Yalnızca 200</option><option value="429">Yalnızca 429</option></select><button type="button" id="csv">CSV indir ↓</button></div></div><div class="tablewrap"><table><thead><tr><th>İstek</th><th>Zaman (ms)</th><th>MP</th><th>Sonuç</th><th>Bekleme (ms)</th><th>Karar nedeni</th></tr></thead><tbody id="rows"></tbody></table></div><div class="hint" id="tableHint"></div></section>
+<section class="panel tablepanel"><div class="headrow"><div><span class="step">04 / MESSAGE PROCESSORS</span><h2>MP yük analizi</h2></div></div><div id="mpSummary" class="mp-grid"></div><div class="hint" id="mpHint"></div></section>
+<section class="panel tablepanel"><div class="headrow"><div><span class="step">05 / ALGORİTMA DENEYİ</span><h2>Aynı trafik, farklı kararlar</h2></div><span class="legend">Genel algoritmalar</span></div><p class="hint">Aşağıdaki genel algoritmalar tek ortak sayaç ve aynı rate ile çalışır. Apigee policy seçenekleri değildir. Edge satırı seçilen MP dağıtımı ve UseEffectiveCount’u kullanır.</p><div class="tablewrap"><table><thead><tr><th>Model</th><th>200</th><th>429</th><th>Kabul oranı</th><th>İlk 429 (ms)</th></tr></thead><tbody id="comparison"></tbody></table></div><div class="insight" id="insight"></div></section>
+</div></div></div>
+<section class="panel foot"><details open><summary>Model, varsayımlar ve policy XML</summary>
+<p>Bu araç deterministik bir simülasyondur; canlı Apigee sonucunun garantisi değildir. İstekler seçilen trafik profili ve ofsete göre gelir; sayaçlar boştur, tek region / pod ve tek Identifier kullanılır. MessageWeight=1, enabled=true ve continueOnError=false kabul edilir. “200”, Spike Arrest’tan geçen isteği temsil eder; backend’in gerçek HTTP yanıtını tahmin etmez. “429”, policy ihlalidir; Edge Private Cloud veya özel fault kuralları farklı HTTP kodu döndürebilir.</p>
+<p><b>Edge:</b> Her MP’de son kabulden itibaren minimum aralık uygulanır; eşikteki istek kabul edilir, ret süreyi uzatmaz. UseEffectiveCount=true ise MP başına rate=rate/MP, false ise rate’tir. Bu, bir token kapasiteli basitleştirilmiş smoothing modelidir. Gerçek sürümün token bucket kapasitesi, burst davranışı ve zaman yuvarlaması farklı sonuç üretebilir; özellikle yüksek rate’lerde birebir emülasyon değildir.</p>
+<p><b>X / hybrid:</b> UseEffectiveCount=true ile MP’ler arasında ortak, ideal kayan pencere modellenir. Son 1 saniye veya 1 dakikada kabul edilen istekler sayılır; (t−pencere, t] sınırı kullanılır. MP sayısı ortak limiti çarpmaz. Dağıtık senkronizasyon gecikmeleri modellenmez. Üretim için desteklenmeyen false seçeneği bu modelde kapalıdır.</p>
+<p><b>Karşılaştırma:</b> Fixed window pencereleri t=0’a hizalıdır, sınırda sayaç sıfırlanır. Sliding window yalnızca son periyodu sayar. Genel token bucket başlangıçta doludur, saniye başına rate kadar sürekli dolar ve kapasiteyi aşmaz; her kabul bir token tüketir. Bunlar ideal modellerdir. Günlükteki bekleme süresi mevcut sayaç durumundan hesaplanır, gerçek bir Retry-After header’ı veya gelecekteki trafiğe rağmen kabul garantisi değildir.</p>
+<pre id="xml"></pre><p>Kaynaklar (09.09.2026): <a href="https://docs.apigee.com/api-platform/reference/policies/spike-arrest-policy" target="_blank" rel="noopener noreferrer">Apigee Edge SpikeArrest</a> · <a href="https://docs.cloud.google.com/apigee/docs/api-platform/reference/policies/spike-arrest-policy" target="_blank" rel="noopener noreferrer">Apigee X / hybrid SpikeArrest</a>. <a href="https://redis.io/tutorials/howtos/ratelimiting/" target="_blank" rel="noopener noreferrer">Genel rate limit algoritmaları</a>. Hesaplama internete bağlanmaz; bağlantılar yalnızca tıklarsanız açılır.</p>
+</details></section>
+<section class="panel foot"><details><summary>API rate limit çalışmasını daha ileri taşımak</summary><div class="ideas"><div><b>01 · Retry ve backoff</b><p>429 sonrası Retry-After, exponential backoff ve jitter stratejilerini karşılaştırmak; yeniden denemelerin ek yükünü ölçmek.</p></div><div><b>02 · Çok katmanlı limitler</b><p>API key / kullanıcı / IP limitlerini toplam servis kotasıyla birlikte modellemek; istemci bazında adaleti incelemek.</p></div><div><b>03 · Gerçek trafik replay</b><p>Anonimleştirilmiş gateway loglarını zaman, Identifier ve ağırlık bilgileriyle oynatıp model kararlarını gerçek sonuçlarla karşılaştırmak.</p></div><div><b>04 · Backend kapasitesi</b><p>Yanıt süresi, eşzamanlı istek sayısı ve kuyruk büyüklüğünü ekleyerek rate limit ile concurrency limit arasındaki farkı görmek.</p></div></div><p>Bu başlıklar sonraki geliştirme fikirleridir; mevcut simülasyona dahil değildir.</p></details></section></section>
+<section id="quotaLab" hidden aria-labelledby="quotaTab">
+<div class="quota-intro"><div><h2>Kotaları birlikte test edin</h2><p>Bir istek ancak tüm aktif limitlerden geçerse kabul edilir. Rastgele taban trafiğine günlük pikler ekleyin.</p></div><button type="button" id="quotaExample">Örnek: yoğun hafta ↗</button></div>
+<form id="quotaConfig" novalidate>
+<section class="panel"><div class="headrow"><div><span class="step">01 / ÇOKLU LİMİTLER</span><h2>Kota kuralları</h2></div><button type="button" id="addRule">+ Limit ekle</button></div>
+<div class="rule-labels"><span>Aktif</span><span>İstek limiti</span><span>Dönem</span><span>Pencere</span><span></span></div><div id="quotaRules"></div>
+<div class="quota-options"><div><label for="qCounting">Reddedilen istekler kotayı tüketsin mi?</label><select id="qCounting"><option value="accepted">Hayır · Yalnızca tüm kurallardan geçenler</option><option value="attempts">Evet · Tüm denemeler</option></select></div><div><label for="qTimezone">Takvim ve pik saatlerinin saat dilimi</label><select id="qTimezone"><option value="3">UTC+03:00</option><option value="0">UTC</option><option value="1">UTC+01:00</option><option value="2">UTC+02:00</option><option value="-5">UTC−05:00</option><option value="-8">UTC−08:00</option></select></div></div>
+<p class="hint">Takvim pencereleri seçilen saat diliminde saniye/dakika/saat/gün başında, aylık kota ayın 1’inde sıfırlanır. Kayan pencere son döneme bakar; ay için yalnızca takvim seçeneği vardır. Saat dilimleri sabit ofsettir, yaz saati uygulanmaz.</p>
+</section>
+<div class="quota-grid">
+<section class="panel"><span class="step">02 / TRAFİK ÜRETİMİ</span><h2>Ne kadar, ne zaman?</h2>
+<div class="quota-options"><div><label for="qStart">Başlangıç (dahil)</label><input id="qStart" type="datetime-local" value="2026-09-01T00:00"></div><div><label for="qEnd">Bitiş (hariç)</label><input id="qEnd" type="datetime-local" value="2026-09-08T00:00"></div></div>
+<label for="qBase">Taban trafik miktarı</label><div class="row"><input id="qBase" type="number" min="0" max="100000" value="2000"><select id="qBaseUnit" aria-label="Taban trafik birimi"><option value="total">Toplam</option><option value="minute">İstek / dakika</option><option value="hour">İstek / saat</option><option value="day" selected>İstek / gün</option></select></div>
+<label for="qDistribution">Taban trafik dağılımı</label><select id="qDistribution"><option value="random">Rastgele zamanlar · Uniform</option><option value="even">Eşit aralıklı</option></select><p class="hint">Miktar, tüm süre için toplam isteğe çevrilir. Rastgele dağılımda her saatin/günün istek sayısı değişebilir.</p>
+<label for="qSeed">Seed</label><input id="qSeed" type="number" min="0" max="4294967295" value="42">
+<div class="scenario-actions"><button type="button" id="qSave">Planı kaydet</button><button type="button" id="qLoad">Plan aç</button><input id="qFile" type="file" accept=".json,application/json" hidden></div>
+</section>
+<section class="panel"><div class="headrow"><div><span class="step">03 / PİK ZAMANLAR</span><h2>Yoğunluk ekleyin</h2></div><button type="button" id="addPeak">+ Pik ekle</button></div><div id="quotaPeaks"></div><p class="hint">Her pik, oluştuğu gün için belirtilen miktarda <b>ek</b> istek üretir. Zamanlar pik aralığına rastgele dağılır. Çakışan pikler toplanır. Bitiş saati başlangıçtan küçükse pik ertesi güne uzar. Kısmen kapsanan piklerin miktarı süreyle orantılı azaltılır.</p></section>
+</div>
+<div class="quota-run"><div><b id="qEstimate">Trafik hesaplanıyor…</b><div class="hint">En fazla 100.000 istek, 366 gün, 12 limit ve 12 pik. Örnekleme yapılmaz.</div></div><button type="submit" id="qRun" class="primary">Simülasyonu çalıştır →</button></div>
+<div id="qError" role="alert" hidden></div>
+</form>
+<div id="qResults" hidden>
+<div class="quota-result-head"><h2>Simülasyon sonucu</h2><span id="qStale" hidden>Konfigürasyon değişti · Yeniden çalıştırın</span></div>
+<div class="stats"><div class="panel stat"><small>Üretilen trafik</small><strong id="qTotal">—</strong><small id="qBreakdown"></small></div><div class="panel stat"><small>200 · Tüm limitlerden geçti</small><strong class="good" id="qPassed">—</strong><small id="qRatio"></small></div><div class="panel stat"><small>429 · En az bir limit aşıldı</small><strong class="bad" id="qBlocked">—</strong><small id="qFirst"></small></div></div>
+<section class="panel"><div class="headrow"><h2>Trafik takvimi</h2><select id="qBin" class="filter" aria-label="Grafik zaman dilimi"><option value="day">Gün bazında</option><option value="hour">Saat bazında</option></select></div><div id="qChart" class="quota-chart"></div><div class="hint" id="qChartHint"></div></section>
+<section class="panel tablepanel"><div class="headrow"><h2>Hangi limit darboğaz oldu?</h2></div><div class="tablewrap"><table><thead><tr><th>Kural</th><th>Pencere</th><th>Engellediği istek</th><th>İlk ihlal</th><th>En yüksek kullanım</th></tr></thead><tbody id="qRuleStats"></tbody></table></div><p class="hint">Bir istek birden fazla limiti ihlal edebilir; kural ihlal sayılarının toplamı 429 sayısından büyük olabilir. En yüksek kullanım seçilen sayaç stratejisine göredir.</p></section>
+<section class="panel tablepanel"><div class="headrow"><h2>İstek günlüğü</h2><div class="quota-log-actions"><select id="qFilter" class="filter" aria-label="Kota sonucu filtresi"><option value="all">Tüm sonuçlar</option><option value="200">Yalnızca 200</option><option value="429">Yalnızca 429</option></select><button type="button" id="qCSV">CSV indir ↓</button></div></div><div class="tablewrap"><table><thead><tr><th>#</th><th>Zaman</th><th>Kaynak</th><th>Sonuç</th><th>İhlal edilen limitler</th><th>En erken uygun zaman*</th></tr></thead><tbody id="qRows"></tbody></table></div><div class="quota-pager"><button type="button" id="qPrev">← Önceki</button><span id="qPageInfo"></span><button type="button" id="qNext">Sonraki →</button></div><p class="hint">* Yeni trafik gelmediği varsayımıyla, mevcut sayaçlar üzerinden hesaplanır. Bir Retry-After header’ı veya gerçek runtime garantisi değildir. CSV seçilen filtredeki tüm sonuçları içerir.</p></section>
+</div>
+<section class="panel foot"><details><summary>Kota simülasyonunun kapsamı ve Apigee ile ilişkisi</summary><p>Bu planlayıcı genel, tek ortak sayaç kümesine sahip bir çoklu limit modelidir. Tüm kurallar birlikte değerlendirilir; varsayılan olarak yalnızca hepsinden geçen istek bütün sayaçları artırır. “Tüm denemeler” seçilirse reddedilenler de tüm sayaçları artırır. Kurallar, hesaplama sıralarından bağımsız olarak atomik uygulanır.</p><p>Takvim ayı gerçek ay uzunluğunu kullanır; 30 günlük kayan pencere değildir. Simülasyon başında geçmiş trafik yoktur. Pikler takvimde başladıkları günün tekrar kuralına bağlıdır. Rastgele trafik, belirtilen toplam miktarın zamanlara uniform dağıtımıdır; gerçek trafik tahmini veya Poisson geliş süreci değildir.</p><p>Apigee’de uzun dönem tüketim sınırları <a href="https://docs.cloud.google.com/apigee/docs/api-platform/reference/policies/quota-policy" target="_blank" rel="noopener noreferrer">Quota policy</a> ile modellenebilir. Bu ekran, sıralı policy çalıştırma, dağıtık sayaç senkronizasyonu, Identifier veya Apigee StartTime ayrıntılarını emüle etmez. Spike Arrest ekranı ayrı bir deneydir; bu ekrandaki kotalarla otomatik olarak zincirlenmez.</p></details></section>
+</section>
+
+<div id="notice" role="status" aria-live="polite"></div>
+</main>
+<script id="quotaInitial" type="application/json">null</script>
+<script>
+'use strict';
+const DEFAULTS={model:'edge',rate:10,unit:'ps',mps:2,effective:true,interval:50,count:40,routing:'round',traffic:'steady',burstSize:5,jitter:50,timestamps:'0, 100, 200, 900, 999, 1000, 1001, 1100',start:0,seed:42,capacity:10};
+const LIMITS={rate:[1,1000000,true],mps:[1,1000,true],interval:[0,3600000,false],count:[1,10000,true],burstSize:[1,10000,true],jitter:[0,100,false],start:[0,3600000,false],seed:[0,4294967295,true],capacity:[1,1000000,true]};
+const LABELS={rate:'Rate',mps:'MP sayısı',interval:'Request interval',count:'İstek sayısı',burstSize:'Burst boyutu',jitter:'Jitter',start:'Başlangıç ofseti',seed:'Seed',capacity:'Token bucket kapasitesi',timestamps:'Zaman damgaları'};
+const fmt=n=>Number.isFinite(n)?new Intl.NumberFormat('tr-TR',{maximumFractionDigits:4}).format(n):'—';
+function invalid(field,message){const e=new Error(message);e.field=field;throw e;}
+function parseTimes(text){
+ if(typeof text!=='string'||text.length>250000)invalid('timestamps','Zaman damgaları metni çok uzun veya geçersiz.');
+ const parts=text.trim().split(/[\s,;]+/).filter(Boolean);
+ if(!parts.length||parts.length>10000)invalid('timestamps','1–10.000 zaman damgası girin.');
+ const times=parts.map(v=>/^\d+(?:\.\d+)?$/.test(v)?Number(v):NaN);
+ if(times.some(t=>!Number.isFinite(t)||t<0||t>1e12))invalid('timestamps','Zamanlar 0–1.000.000.000.000 ms arasında olmalı. Ondalık ayracı nokta olmalı.');
+ return times.sort((a,b)=>a-b);
+}
+function validateConfig(raw){
+ const c={...DEFAULTS,...raw};
+ for(const [key,options] of Object.entries({model:['edge','x'],unit:['ps','pm'],routing:['round','single','random'],traffic:['steady','burst','jitter','custom']}))if(!options.includes(c[key]))invalid(key,`Geçersiz seçenek: ${key}`);
+ if(typeof c.effective!=='boolean')invalid('effective','UseEffectiveCount true veya false olmalı.');
+ for(const [key,[min,max,int]] of Object.entries(LIMITS)){
+  const active=!(c.traffic==='custom'&&['interval','count'].includes(key))&&!(c.traffic!=='burst'&&key==='burstSize')&&!(c.traffic!=='jitter'&&key==='jitter')&&!((c.traffic!=='jitter'&&c.routing!=='random')&&key==='seed');
+  const val=c[key],n=typeof val==='number'||typeof val==='string'&&val.trim()!==''?Number(val):NaN;
+  const good=Number.isFinite(n)&&n>=min&&n<=max&&(!int||Number.isInteger(n));
+  if(!good&&active)invalid(key,`${LABELS[key]}: ${fmt(min)}–${fmt(max)} arasında ${int?'tam sayı':'bir sayı'} girin.`);
+  c[key]=good?n:DEFAULTS[key];
+ }
+ if(c.traffic==='custom')parseTimes(c.timestamps);
+ else if(typeof c.timestamps!=='string'||c.timestamps.length>250000)c.timestamps=DEFAULTS.timestamps;
+ if(c.model==='x')c.effective=true;
+ return c;
+}
+function rng(initial){let state=initial>>>0;return()=>{state=(Math.imul(1664525,state)+1013904223)>>>0;return state/4294967296;};}
+function makeTraffic(c){
+ const randomTime=rng(c.seed),randomMP=rng(c.seed^0x9e3779b9);let times=[];
+ if(c.traffic==='custom')times=parseTimes(c.timestamps).map(t=>t+c.start);
+ else{let t=c.start;for(let i=0;i<c.count;i++){
+  if(c.traffic==='burst')t=c.start+Math.floor(i/c.burstSize)*c.interval;
+  else if(c.traffic==='steady')t=c.start+i*c.interval;
+  else if(i)t+=c.interval*(1+(2*randomTime()-1)*c.jitter/100);
+  times.push(t);
+ }}
+ return times.map((t,i)=>({id:i+1,t,mp:c.routing==='round'?i%c.mps+1:c.routing==='single'?1:Math.floor(randomMP()*c.mps)+1}));
+}
+// Relative floating-point tolerance, bounded below one microsecond for supported times.
+function atOrAfter(a,b){return a>=b||b-a<=Math.max(1e-9,Math.max(Math.abs(a),Math.abs(b))*Number.EPSILON*4);}
+function simulate(c,traffic=makeTraffic(c),algorithm=c.model){
+ const period=c.unit==='ps'?1000:60000,gap=period/c.rate*(c.effective?c.mps:1);
+ const next=Array(c.mps).fill(-Infinity),accepted=[];let head=0,tokens=c.capacity,last=traffic[0]?.t??0,window=-1,used=0;
+ const rows=traffic.map(r=>{
+  const {t,mp}=r;let ok=false,wait=0,reason='';
+  if(algorithm==='x'||algorithm==='sliding'){
+   while(head<accepted.length&&atOrAfter(t-period,accepted[head]))head++;
+   const used=accepted.length-head;ok=used<c.rate;
+   if(ok){accepted.push(t);reason=`Ortak pencere: ${used+1}/${c.rate} istek.`;}
+   else{wait=Math.max(0,accepted[head]+period-t);reason=`Ortak pencere dolu; ${fmt(wait)} ms sonra yer açılır.`;}
+  }else if(algorithm==='fixed'){
+   const w=Math.floor(t/period);if(w!==window){window=w;used=0;}
+   ok=used<c.rate;if(ok)used++;else wait=(window+1)*period-t;
+   reason=`Sabit pencere: ${used}/${c.rate} istek.`;
+  }else if(algorithm==='token'){
+   tokens=Math.min(c.capacity,tokens+(t-last)*c.rate/period);last=t;ok=atOrAfter(tokens,1);
+   if(ok)tokens=Math.max(0,tokens-1);else wait=(1-tokens)*period/c.rate;
+   reason=`Kalan token: ${fmt(tokens)}.`;
+  }else{
+   ok=atOrAfter(t,next[mp-1]);wait=ok?0:next[mp-1]-t;
+   reason=ok?`MP ${mp} hazır; sonraki kabul ≥ ${fmt(t+gap)} ms.`:`MP ${mp} için ${fmt(wait)} ms erken; kabul ≥ ${fmt(next[mp-1])} ms.`;
+   if(ok)next[mp-1]=t+gap;
+  }
+  return {...r,status:ok?200:429,wait,reason};
+ });
+ return {rows,gap,period};
+}
+function summary(rows){const pass=rows.filter(r=>r.status===200).length;return {pass,fail:rows.length-pass,pct:pass/rows.length*100,first:rows.find(r=>r.status===429)?.t};}
+function toCSV(rows){return '\ufeff'+['request,time_ms,mp,status,wait_ms,reason',...rows.map(r=>[r.id,r.t,r.mp,r.status,r.wait,'"'+r.reason.replaceAll('"','""')+'"'].join(','))].join('\r\n');}
+const QDAY=86400000,QPERIOD={second:1000,minute:60000,hour:3600000,day:QDAY};
+const QUNIT={second:'saniye',minute:'dakika',hour:'saat',day:'gün',month:'ay'};
+const QDEFAULTS={start:'2026-09-01T00:00',end:'2026-09-08T00:00',timezone:3,base:2000,baseUnit:'day',distribution:'random',seed:42,counting:'accepted',rules:[{enabled:true,limit:10,unit:'second',mode:'sliding'},{enabled:true,limit:120,unit:'minute',mode:'sliding'},{enabled:true,limit:1000,unit:'hour',mode:'calendar'},{enabled:true,limit:3000,unit:'day',mode:'calendar'},{enabled:true,limit:15000,unit:'month',mode:'calendar'}],peaks:[{start:'12:00',end:'13:00',amount:800,repeat:'all'},{start:'18:00',end:'18:30',amount:1200,repeat:'all'}]};
+function qInteger(value,min,max,label){const n=(typeof value==='number'||typeof value==='string'&&value.trim()!=='')?Number(value):NaN;if(!Number.isInteger(n)||n<min||n>max)throw Error(`${label}: ${fmt(min)}–${fmt(max)} arasında tam sayı girin.`);return n;}
+function qParseDate(value,timezone){
+ if(typeof value!=='string'||!/^20\d\d-\d\d-\d\dT\d\d:\d\d$/.test(value))throw Error('Tarihleri 2000–2099 aralığında, tarih ve saat ile girin.');
+ const t=Date.parse(value+':00Z');if(!Number.isFinite(t)||new Date(t).toISOString().slice(0,16)!==value)throw Error('Geçerli bir takvim tarihi ve saat girin.');return t-timezone*3600000;
+}
+function qClock(value){if(typeof value!=='string'||!/^([01]\d|2[0-3]):[0-5]\d$/.test(value))throw Error('Pik saatlerini SS:DD biçiminde girin.');const [h,m]=value.split(':').map(Number);return h*3600000+m*60000;}
+function qValidate(raw){
+ if(!raw||typeof raw!=='object'||Array.isArray(raw))throw Error('Geçersiz kota planı.');
+ const q={...QDEFAULTS,...raw};q.timezone=qInteger(q.timezone,-12,14,'Saat dilimi');if(![3,0,1,2,-5,-8].includes(q.timezone))throw Error('Desteklenmeyen saat dilimi.');
+ q.startMs=qParseDate(q.start,q.timezone);q.endMs=qParseDate(q.end,q.timezone);
+ if(q.endMs<=q.startMs||q.endMs-q.startMs>366*QDAY)throw Error('Bitiş başlangıçtan sonra olmalı; tarih aralığı en fazla 366 gün olabilir.');
+ q.base=qInteger(q.base,0,100000,'Taban trafik');q.seed=qInteger(q.seed,0,4294967295,'Seed');
+ if(!['total','minute','hour','day'].includes(q.baseUnit)||!['random','even'].includes(q.distribution)||!['accepted','attempts'].includes(q.counting))throw Error('Geçersiz trafik veya sayaç seçeneği.');
+ if(!Array.isArray(q.rules)||q.rules.length>12)throw Error('En fazla 12 limit ekleyebilirsiniz.');
+ q.rules=q.rules.map((r,i)=>{if(!r||typeof r.enabled!=='boolean'||!Object.hasOwn(QUNIT,r.unit)||!['sliding','calendar'].includes(r.mode))throw Error(`Limit ${i+1}: Geçersiz kural.`);if(r.unit==='month'&&r.mode!=='calendar')throw Error('Aylık kota yalnızca gerçek takvim ayıyla çalışır.');return {enabled:r.enabled,limit:qInteger(r.limit,1,1000000000,`Limit ${i+1}`),unit:r.unit,mode:r.mode};});
+ if(!Array.isArray(q.peaks)||q.peaks.length>12)throw Error('En fazla 12 pik ekleyebilirsiniz.');
+ q.peaks=q.peaks.map((p,i)=>{if(!p||!['all','weekdays','weekends','once'].includes(p.repeat))throw Error(`Pik ${i+1}: Geçersiz tekrar.`);const a=qClock(p.start),b=qClock(p.end);if(a===b)throw Error(`Pik ${i+1}: Başlangıç ve bitiş aynı olamaz.`);return {start:p.start,end:p.end,amount:qInteger(p.amount,0,100000,`Pik ${i+1} miktarı`),repeat:p.repeat,...(p.repeat==='once'?{date:qValidateDay(p.date)}:{})};});
+ return q;
+}
+function qValidateDay(value){qParseDate(value+'T00:00',0);return value;}
+function qPlan(q){
+ const span=q.endMs-q.startMs,base=q.baseUnit==='total'?q.base:Math.floor(q.base*span/QPERIOD[q.baseUnit]);
+ const offset=q.timezone*3600000,firstDay=Math.floor((q.startMs+offset)/QDAY)*QDAY-offset,occurrences=[];
+ q.peaks.forEach((p,index)=>{
+  const a=qClock(p.start),b=qClock(p.end),duration=b>a?b-a:QDAY-a+b;
+  for(let day=firstDay-QDAY;day<q.endMs;day+=QDAY){
+   const date=new Date(day+offset),weekday=date.getUTCDay();
+   if(p.repeat==='weekdays'&&(weekday===0||weekday===6)||p.repeat==='weekends'&&weekday!==0&&weekday!==6||p.repeat==='once'&&date.toISOString().slice(0,10)!==p.date)continue;
+   const lo=Math.max(day+a,q.startMs),hi=Math.min(day+a+duration,q.endMs);
+   if(hi>lo){const count=Math.floor(p.amount*(hi-lo)/duration);if(count)occurrences.push({start:lo,end:hi,count,source:index+1});}
+  }
+ });
+ const peak=occurrences.reduce((n,p)=>n+p.count,0),total=base+peak;
+ if(total>100000)throw Error(`Bu plan ${fmt(total)} istek üretir. 100.000 sınırını aşmamak için trafik miktarını veya tarih aralığını azaltın.`);
+ return {base,peak,total,occurrences};
+}
+function qTraffic(q,plan=qPlan(q)){
+ const rows=[],random=rng(q.seed);let sequence=0;
+ for(let i=0;i<plan.base;i++){const f=q.distribution==='random'?random():i/plan.base;rows.push({t:q.startMs+Math.floor(f*(q.endMs-q.startMs)),source:0,sequence:sequence++});}
+ for(const p of plan.occurrences)for(let i=0;i<p.count;i++)rows.push({t:p.start+Math.floor(random()*(p.end-p.start)),source:p.source,sequence:sequence++});
+ rows.sort((a,b)=>a.t-b.t||a.sequence-b.sequence);return rows.map((r,i)=>({id:i+1,t:r.t,source:r.source}));
+}
+function qBounds(t,unit,timezone){
+ const offset=timezone*3600000;
+ if(unit==='month'){const d=new Date(t+offset),y=d.getUTCFullYear(),m=d.getUTCMonth();return {start:Date.UTC(y,m,1)-offset,end:Date.UTC(y,m+1,1)-offset};}
+ const start=Math.floor((t+offset)/QPERIOD[unit])*QPERIOD[unit]-offset;return {start,end:start+QPERIOD[unit]};
+}
+function qSimulate(q,traffic=qTraffic(q)){
+ const states=q.rules.map((rule,index)=>({rule,index,end:-Infinity,count:0,queue:[],head:0,maximum:0,blocked:0,first:null})).filter(s=>s.rule.enabled);
+ const rows=traffic.map(r=>{
+  const violated=[];
+  for(const s of states){
+   if(s.rule.mode==='calendar'){if(r.t>=s.end){s.end=qBounds(r.t,s.rule.unit,q.timezone).end;s.count=0;}}
+   else{while(s.head<s.queue.length&&s.queue[s.head]<=r.t-QPERIOD[s.rule.unit])s.head++;s.count=s.queue.length-s.head;}
+   if(s.count>=s.rule.limit){violated.push(s);s.blocked++;if(s.first===null)s.first=r.t;}
+  }
+  const ok=violated.length===0;
+  if(ok||q.counting==='attempts')for(const s of states){s.count++;if(s.rule.mode==='sliding')s.queue.push(r.t);s.maximum=Math.max(s.maximum,s.count);}
+  let next=null;
+  for(const s of violated){const available=s.rule.mode==='calendar'?s.end:s.queue[s.head+s.count-s.rule.limit]+QPERIOD[s.rule.unit];next=next===null?available:Math.max(next,available);}
+  return {...r,status:ok?200:429,violations:violated.map(s=>s.index),next};
+ });
+ return {rows,stats:states.map(s=>({index:s.index,maximum:s.maximum,blocked:s.blocked,first:s.first}))};
+}
+function qTime(t,timezone,seconds=true){if(t===null||t===undefined)return '—';return new Date(t+timezone*3600000).toISOString().slice(0,seconds?23:16).replace('T',' ');}
+function qRuleLabel(r){return `${fmt(r.limit)} / ${QUNIT[r.unit]}`;}
+function qCSV(rows,q){const cell=v=>'"'+String(v).replaceAll('"','""')+'"';return '\ufeff'+['request,time_local,utc_offset,source,status,violated_limits,next_available_local',...rows.map(r=>[r.id,cell(qTime(r.t,q.timezone)),q.timezone,cell(r.source?'Pik '+r.source:'Taban'),r.status,cell(r.violations.map(i=>qRuleLabel(q.rules[i])).join(' | ')),cell(qTime(r.next,q.timezone))].join(','))].join('\r\n');}
+
+// UI only below this marker; the simulation above has no DOM or network dependency.
+const $=id=>document.getElementById(id);
+let current=null,currentConfig=null,noticeTimer;
+function notify(message){$('notice').textContent=message;clearTimeout(noticeTimer);noticeTimer=setTimeout(()=>$('notice').textContent='',4500);}
+function read(){const raw={};for(const key of Object.keys(DEFAULTS))raw[key]=key==='effective'?$(key).value==='true':$(key).value;return validateConfig(raw);}
+function write(c){for(const key of Object.keys(DEFAULTS))$(key).value=String(c[key]);}
+function toggleFields(){
+ const profile=$('traffic').value,isX=$('model').value==='x';$('effective').disabled=isX;if(isX)$('effective').value='true';
+ $('standardFields').hidden=profile==='custom';$('countField').hidden=profile==='custom';$('burstField').hidden=profile!=='burst';$('jitterField').hidden=profile!=='jitter';$('customField').hidden=profile!=='custom';$('seedField').hidden=profile!=='jitter'&&$('routing').value!=='random';
+}
+function renderTable(){
+ if(!current)return;const filtered=current.rows.filter(r=>$('filter').value==='all'||String(r.status)===$('filter').value);
+ $('rows').innerHTML=filtered.slice(0,1000).map(r=>`<tr><td>#${r.id}</td><td>${fmt(r.t)}</td><td>MP ${r.mp}</td><td><span class="badge ${r.status===200?'good':'bad'}">${r.status}</span></td><td>${r.status===429?fmt(r.wait):'—'}</td><td>${r.reason}</td></tr>`).join('');
+ $('tableHint').textContent=filtered.length?`${fmt(filtered.length)} sonuç${filtered.length>1000?' · İlk 1.000 gösteriliyor; CSV tüm istekleri içerir.':''}`:'Bu filtrede istek yok.';
+}
+function renderChart(rows){
+ const start=rows[0].t,end=rows.at(-1).t,span=end-start,bins=Array.from({length:span?Math.min(40,rows.length):1},()=>({pass:0,fail:0}));
+ rows.forEach(r=>{const i=span?Math.min(bins.length-1,Math.floor((r.t-start)/span*bins.length)):0;bins[i][r.status===200?'pass':'fail']++;});
+ const max=Math.max(...bins.map(b=>b.pass+b.fail)),width=720,height=155,plot=660,step=plot/bins.length,bar=Math.max(2,step-4);
+ const bars=bins.map((b,i)=>{const x=45+i*step+2,ph=b.pass/max*100,fh=b.fail/max*100;return `<g><title>Dilim ${i+1}: ${b.pass} kabul, ${b.fail} ret</title><rect x="${x}" y="${118-ph}" width="${bar}" height="${ph}" fill="#a9ef75" rx="1"/><rect x="${x}" y="${118-ph-fh}" width="${bar}" height="${fh}" fill="#ff938e" rx="1"/></g>`;}).join('');
+ $('chart').innerHTML=`<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${rows.length} isteğin zaman dilimlerine göre kabul ve ret dağılımı"><line x1="45" x2="710" y1="118" y2="118" stroke="#3a454a"/><line x1="45" x2="710" y1="18" y2="18" stroke="#30383c" stroke-dasharray="3 5"/><g fill="#a1aeaf" font-size="10" font-family="monospace"><text x="0" y="22">${max}</text><text x="25" y="121">0</text><text x="45" y="142">${fmt(start)} ms</text><text x="705" y="142" text-anchor="end">${fmt(end)} ms</text></g>${bars}</svg>`;
+ $('chartHint').textContent=span?`${bins.length} eşit zaman dilimi · Her sütun o dilimdeki istek sayısıdır. Son zaman son dilime dahildir.`:'Tüm istekler aynı anda geliyor; tek burst gösteriliyor.';
+}
+function renderMP(c,rows){
+ const stats=Array.from({length:c.mps},()=>({pass:0,fail:0}));rows.forEach(r=>stats[r.mp-1][r.status===200?'pass':'fail']++);
+ $('mpSummary').innerHTML=stats.map((s,i)=>{const total=s.pass+s.fail;return `<div class="mp-card"><b>MP ${i+1}</b><p>${total} istek · <span class="good">${s.pass} geçti</span> / <span class="bad">${s.fail} ret</span></p><div class="meter"><span style="width:${total?s.pass/total*100:0}%"></span></div></div>`;}).join('');
+ const idle=stats.filter(s=>s.pass+s.fail===0).length;
+ $('mpHint').textContent=`${idle} MP trafik almadı. `+(c.model==='x'?'Kararlar MP başına değil, ortak pencereye göre verilir.':'Bir MP’nin boş kapasitesi diğer MP’ye otomatik aktarılmaz.');
+}
+function renderComparison(c,traffic){
+ const entries=[['Edge · smoothing','edge'],['Sliding window · ortak','sliding'],['Fixed window · ortak','fixed'],['Token bucket · ortak','token']].map(([label,algorithm])=>({label,algorithm,...summary(simulate(c,traffic,algorithm).rows)}));
+ $('comparison').innerHTML=entries.map(r=>`<tr><td>${r.label}${r.algorithm===(c.model==='x'?'sliding':'edge')?' <span class="good">← seçili</span>':''}</td><td class="good">${r.pass}</td><td class="bad">${r.fail}</td><td>%${fmt(r.pct)}</td><td>${r.first===undefined?'—':fmt(r.first)}</td></tr>`).join('');
+ const [edge,slide,fixed,token]=entries;
+ let insight='Bu senaryoda modellerin kabul sayıları aynı. Burst veya pencere sınırı örneği ile kararların nasıl değiştiğini inceleyin.';
+ if(new Set(entries.map(r=>r.pass)).size>1)insight=`Sliding window ${slide.pass}, fixed window ${fixed.pass}, token bucket ${token.pass} istek kabul etti. `+(fixed.pass>slide.pass?'Sabit pencere sınırındaki sayaç sıfırlaması kısa sürede daha fazla isteğe izin verebilir.':token.pass>slide.pass?'Dolu token bucket, biriken burst kapasitesinin kullanılmasına izin verir.':'Toplam sayıların yanında ilk ret zamanını ve MP dağılımını da değerlendirin.');
+ if(c.model==='edge'&&!c.effective&&c.mps>1)insight+=` Edge’in nominal toplam limiti ${c.rate*c.mps}${c.unit}; ortak algoritmaların limiti ${c.rate}${c.unit}.`;
+ $('insight').textContent=insight;
+}
+function update(){
+ toggleFields();document.querySelectorAll('[aria-invalid="true"]').forEach(e=>e.removeAttribute('aria-invalid'));
+ try{
+  const c=read(),traffic=makeTraffic(c);current=simulate(c,traffic);currentConfig=c;$('error').hidden=true;$('results').hidden=false;
+  const stats=summary(current.rows),n=traffic.length,duration=traffic.at(-1).t-traffic[0].t;
+  $('total').textContent=fmt(n);$('passed').textContent=fmt(stats.pass);$('blocked').textContent=fmt(stats.fail);$('percent').textContent=`%${fmt(stats.pct)} kabul oranı`;$('duration').textContent=`${fmt(duration)} ms trafik süresi`;
+  $('formula').textContent=c.model==='x'?`Ortak limit: ${c.rate}${c.unit} · Kayan pencere: ${fmt(current.period)} ms · ${c.mps} MP aynı sayacı paylaşır.`:`MP başına ${fmt(c.rate/(c.effective?c.mps:1))}${c.unit} → minimum aralık ${fmt(current.gap)} ms · Toplam nominal limit ${fmt(c.rate*(c.effective?1:c.mps))}${c.unit}`;
+  $('timeline').innerHTML=current.rows.slice(0,500).map(r=>`<button type="button" class="dot ${r.status===429?'reject':''}" data-id="${r.id}" aria-label="İstek ${r.id}, ${fmt(r.t)} ms, MP ${r.mp}, ${r.status}" title="#${r.id} · ${fmt(r.t)} ms · MP ${r.mp} · ${r.status}">${r.id}</button>`).join('');
+  $('timelineHint').textContent=n>500?'İlk 500 istek gösteriliyor. Tam sonuçlar CSV dosyasında.':'Soldan sağa istek sırası; kutu aralıkları zamanı temsil etmez.';
+  $('detail').textContent='Detay için bir isteğe tıklayın.';
+  $('xml').textContent=`<SpikeArrest name="SA-Traffic" enabled="true" continueOnError="false">\n  <Rate>${c.rate}${c.unit}</Rate>\n  <UseEffectiveCount>${c.effective}</UseEffectiveCount>\n</SpikeArrest>`;
+  renderTable();renderChart(current.rows);renderMP(c,current.rows);renderComparison(c,traffic);
+ }catch(e){current=null;currentConfig=null;$('error').textContent=e.message;$('error').hidden=false;$('results').hidden=true;$('xml').textContent='Geçerli konfigürasyon girin.';if(e.field)$(e.field)?.setAttribute('aria-invalid','true');}
+}
+function download(text,type,name){const url=URL.createObjectURL(new Blob([text],{type}));const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function offlineHTML(){
+ const clone=document.documentElement.cloneNode(true);
+ clone.querySelectorAll('[data-online-only]').forEach(e=>e.remove());
+ // Serialize current form properties, which cloneNode / outerHTML do not preserve.
+ const originals=document.querySelectorAll('input,select,textarea');
+ const copies=clone.querySelectorAll('input,select,textarea');
+ originals.forEach((original,i)=>{
+  const copy=copies[i];
+  if(original.tagName==='SELECT')Array.from(copy.options).forEach((option,j)=>option.toggleAttribute('selected',original.selectedIndex===j));
+  else if(original.tagName==='TEXTAREA')copy.textContent=original.value;
+  else if(original.type==='checkbox')copy.toggleAttribute('checked',original.checked);
+  else if(original.type!=='file')copy.setAttribute('value',original.value);
+ });
+ clone.querySelector('#quotaInitial').textContent=JSON.stringify(qRead()).replaceAll('<','\\u003c');
+ clone.querySelector('#notice').textContent='';
+ return '<!doctype html>\n'+clone.outerHTML;
+}
+$('config').addEventListener('submit',e=>e.preventDefault());$('config').addEventListener('input',update);$('filter').addEventListener('change',renderTable);
+$('timeline').addEventListener('click',e=>{const b=e.target.closest('[data-id]');if(!b||!current)return;const r=current.rows[Number(b.dataset.id)-1];document.querySelectorAll('.dot.selected').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');$('detail').textContent=`#${r.id} · t=${fmt(r.t)} ms · MP ${r.mp} → ${r.status} | ${r.reason}`;});
+const PRESETS={edge:{},minute:{rate:30,unit:'pm',mps:1,effective:false,interval:500,count:20},burst:{model:'x',mps:3,traffic:'burst',burstSize:15,interval:1000,count:60},boundary:{model:'x',rate:2,mps:1,traffic:'custom',timestamps:'998, 999, 1000, 1001',capacity:2}};
+document.querySelectorAll('[data-preset]').forEach(b=>b.addEventListener('click',()=>{write({...DEFAULTS,...PRESETS[b.dataset.preset]});update();}));
+$('csv').addEventListener('click',()=>{if(current)download(toCSV(current.rows),'text/csv;charset=utf-8','spike-arrest-results.csv');});
+$('downloadHtml')?.addEventListener('click',()=>{if(!currentConfig){notify('Önce geçerli bir konfigürasyon girin.');return;}try{download(offlineHTML(),'text/html;charset=utf-8','spike-arrest-offline.html');notify('HTML indirildi. İki çalışma alanının ayarları korundu; indirme düğmesi çıkarıldı.');}catch(e){notify('Kota ayarlarını kontrol edin: '+e.message);}});
+$('saveConfig').addEventListener('click',()=>{if(!currentConfig){notify('Önce geçerli bir konfigürasyon girin.');return;}download(JSON.stringify({version:2,config:currentConfig},null,2),'application/json','rate-limit-scenario.json');});
+$('loadConfig').addEventListener('click',()=>$('configFile').click());
+$('configFile').addEventListener('change',async e=>{
+ const file=e.target.files[0];if(!file)return;
+ try{if(file.size>300000)throw Error('Senaryo dosyası en fazla 300 KB olabilir.');const data=JSON.parse(await file.text());if(data.version!==2||!data.config||typeof data.config!=='object'||Array.isArray(data.config))throw Error('Geçersiz senaryo dosyası (v2 JSON bekleniyor).');const c=validateConfig(data.config);write(c);update();notify('Senaryo yüklendi.');}
+ catch(err){notify('Senaryo açılamadı: '+err.message);}finally{e.target.value='';}
+});
+update();
+let qLast=null,qLastConfig=null,qPage=0,qRuleSerial=0,qPeakSerial=0;
+const QFIELDS={start:'qStart',end:'qEnd',timezone:'qTimezone',base:'qBase',baseUnit:'qBaseUnit',distribution:'qDistribution',seed:'qSeed',counting:'qCounting'};
+const escapeHTML=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function qRuleMarkup(r){
+ const n=++qRuleSerial;return `<div class="quota-rule"><input type="checkbox" data-field="enabled" aria-label="Limit ${n} aktif" ${r.enabled?'checked':''}><input type="number" data-field="limit" aria-label="Limit ${n} istek sayısı" min="1" max="1000000000" value="${r.limit}"><select data-field="unit" aria-label="Limit ${n} dönemi">${Object.entries(QUNIT).map(([v,label])=>`<option value="${v}" ${r.unit===v?'selected':''}>${label}</option>`).join('')}</select><select data-field="mode" aria-label="Limit ${n} pencere türü" ${r.unit==='month'?'disabled':''}><option value="calendar" ${r.mode==='calendar'?'selected':''}>Takvim</option><option value="sliding" ${r.mode==='sliding'?'selected':''}>Kayan pencere</option></select><button type="button" class="remove-row" data-remove-rule aria-label="Limit ${n} sil">×</button></div>`;
+}
+function qPeakMarkup(p){
+ const n=++qPeakSerial;return `<div class="peak-row"><div class="peak-head"><b>Pik trafik</b><button type="button" class="remove-row" data-remove-peak aria-label="Pik sil">×</button></div><div class="peak-fields"><div><label for="peak-${n}-start">Başlangıç saati</label><input id="peak-${n}-start" data-field="start" type="time" value="${p.start}"></div><div><label for="peak-${n}-end">Bitiş saati</label><input id="peak-${n}-end" data-field="end" type="time" value="${p.end}"></div><div><label for="peak-${n}-amount">Ek istek / pik</label><input id="peak-${n}-amount" data-field="amount" type="number" min="0" max="100000" value="${p.amount}"></div><div><label for="peak-${n}-repeat">Tekrar</label><select id="peak-${n}-repeat" data-field="repeat">${[['all','Her gün'],['weekdays','Hafta içi'],['weekends','Hafta sonu'],['once','Belirli tarih']].map(([v,label])=>`<option value="${v}" ${p.repeat===v?'selected':''}>${label}</option>`).join('')}</select></div><div data-date-wrap ${p.repeat==='once'?'':'hidden'}><label for="peak-${n}-date">Pik başlangıç tarihi</label><input id="peak-${n}-date" data-field="date" type="date" value="${escapeHTML(p.date||$('qStart').value.slice(0,10)||'2026-09-01')}"></div></div></div>`;
+}
+function qRead(){
+ const raw={};for(const [key,id] of Object.entries(QFIELDS))raw[key]=$(id).value;
+ raw.rules=Array.from($('quotaRules').children,row=>({enabled:row.querySelector('[data-field="enabled"]').checked,limit:row.querySelector('[data-field="limit"]').value,unit:row.querySelector('[data-field="unit"]').value,mode:row.querySelector('[data-field="mode"]').value}));
+ raw.peaks=Array.from($('quotaPeaks').children,row=>Object.fromEntries(['start','end','amount','repeat','date'].map(key=>[key,row.querySelector(`[data-field="${key}"]`).value])));
+ return qValidate(raw);
+}
+function qWrite(q){
+ for(const [key,id] of Object.entries(QFIELDS))$(id).value=String(q[key]);
+ $('quotaRules').innerHTML=q.rules.map(qRuleMarkup).join('');$('quotaPeaks').innerHTML=q.peaks.map(qPeakMarkup).join('');qUpdateEstimate();
+}
+function qUpdateEstimate(){
+ if(qLast)$('qStale').hidden=false;
+ try{const q=qRead(),p=qPlan(q);$('qEstimate').textContent=`${fmt(p.total)} istek = ${fmt(p.base)} taban + ${fmt(p.peak)} pik`;$('qError').hidden=true;$('qRun').disabled=false;}
+ catch(e){$('qEstimate').textContent='Konfigürasyonu kontrol edin.';$('qError').textContent=e.message;$('qError').hidden=false;$('qRun').disabled=true;}
+}
+function qFiltered(){return qLast?qLast.rows.filter(r=>$('qFilter').value==='all'||String(r.status)===$('qFilter').value):[];}
+function qRenderLog(){
+ if(!qLast)return;const rows=qFiltered(),pages=Math.max(1,Math.ceil(rows.length/100));qPage=Math.min(qPage,pages-1);
+ $('qRows').innerHTML=rows.slice(qPage*100,(qPage+1)*100).map(r=>`<tr><td>${r.id}</td><td>${qTime(r.t,qLastConfig.timezone)}</td><td>${r.source?'Pik '+r.source:'Taban'}</td><td><span class="badge ${r.status===200?'good':'bad'}">${r.status}</span></td><td>${r.violations.length?r.violations.map(i=>qRuleLabel(qLastConfig.rules[i])).join(' · '):'—'}</td><td>${qTime(r.next,qLastConfig.timezone)}</td></tr>`).join('');
+ $('qPageInfo').textContent=`${fmt(rows.length)} sonuç · Sayfa ${qPage+1} / ${pages}`;$('qPrev').disabled=qPage===0;$('qNext').disabled=qPage>=pages-1;
+}
+function qRenderChart(){
+ if(!qLast)return;const q=qLastConfig,unit=$('qBin').value,step=QPERIOD[unit],start=qBounds(q.startMs,unit,q.timezone).start,bins=Array.from({length:Math.ceil((q.endMs-start)/step)},()=>({pass:0,fail:0}));
+ for(const r of qLast.rows)bins[Math.floor((r.t-start)/step)][r.status===200?'pass':'fail']++;
+ const groupSize=Math.max(1,Math.ceil(bins.length/90)),groups=[];
+ for(let i=0;i<bins.length;i+=groupSize){const slice=bins.slice(i,i+groupSize);groups.push({index:i,pass:slice.reduce((n,b)=>n+b.pass,0),fail:slice.reduce((n,b)=>n+b.fail,0)});}
+ const max=Math.max(1,...groups.map(b=>b.pass+b.fail)),width=900,plot=820,barStep=plot/groups.length,bw=Math.max(1,barStep-3);
+ const bars=groups.map((b,i)=>{const x=58+i*barStep,ph=b.pass/max*138,fh=b.fail/max*138;return `<g><title>${qTime(start+b.index*step,q.timezone,false)} · ${b.pass} kabul / ${b.fail} ret</title><rect x="${x}" y="${162-ph}" width="${bw}" height="${ph}" fill="#a9ef75"/><rect x="${x}" y="${162-ph-fh}" width="${bw}" height="${fh}" fill="#ff938e"/></g>`;}).join('');
+ $('qChart').innerHTML=`<svg viewBox="0 0 ${width} 210" role="img" aria-label="Kota trafiğinin zaman içindeki kabul ve ret dağılımı"><g fill="#a1aeaf" font-size="11" font-family="monospace"><text x="0" y="27">${fmt(max)}</text><text x="30" y="164">0</text><text x="58" y="192">${qTime(q.startMs,q.timezone,false)}</text><text x="878" y="192" text-anchor="end">${qTime(q.endMs,q.timezone,false)}</text></g><line x1="58" x2="878" y1="162" y2="162" stroke="#3a454a"/>${bars}</svg>`;
+ $('qChartHint').textContent=`Yeşil: 200 · Kırmızı: 429 · ${unit==='day'?'Günlük':'Saatlik'} dilimler${groupSize>1?`, grafikte ${groupSize} dilim birleştirildi`:''}. Saat dilimi UTC${q.timezone>=0?'+':''}${q.timezone}. Sütunların üzerine gelerek sayıları görebilirsiniz.`;
+}
+function qRunSimulation(){
+ try{
+  const q=qRead(),plan=qPlan(q),result=qSimulate(q,qTraffic(q,plan));qLast=result;qLastConfig=q;qPage=0;
+  const pass=result.rows.filter(r=>r.status===200).length,first=result.rows.find(r=>r.status===429);
+  $('qTotal').textContent=fmt(plan.total);$('qPassed').textContent=fmt(pass);$('qBlocked').textContent=fmt(plan.total-pass);$('qBreakdown').textContent=`${fmt(plan.base)} taban + ${fmt(plan.peak)} pik`;$('qRatio').textContent=plan.total?`%${fmt(pass/plan.total*100)} kabul`:'Trafik yok';$('qFirst').textContent=first?'İlk ret: '+qTime(first.t,q.timezone,false):'Ret yok';
+  $('qRuleStats').innerHTML=result.stats.map(s=>{const r=q.rules[s.index];return `<tr><td>${qRuleLabel(r)}</td><td>${r.mode==='calendar'?'Takvim':'Kayan'}</td><td class="${s.blocked?'bad':'good'}">${fmt(s.blocked)}</td><td>${qTime(s.first,q.timezone,false)}</td><td>${fmt(s.maximum)} / ${fmt(r.limit)}</td></tr>`;}).join('')||'<tr><td colspan="5">Aktif limit yok; tüm istekler kabul edildi.</td></tr>';
+  $('qError').hidden=true;$('qResults').hidden=false;$('qStale').hidden=true;qRenderLog();qRenderChart();
+ }catch(e){$('qError').textContent=e.message;$('qError').hidden=false;if(qLast)$('qStale').hidden=false;}
+}
+function selectLab(quota){$('spikeLab').hidden=quota;$('quotaLab').hidden=!quota;for(const [id,active] of [['spikeTab',!quota],['quotaTab',quota]]){$(id).classList.toggle('active',active);$(id).setAttribute('aria-pressed',String(active));}if(quota&&!qLast)qRunSimulation();}
+$('spikeTab').addEventListener('click',()=>selectLab(false));$('quotaTab').addEventListener('click',()=>selectLab(true));
+$('quotaConfig').addEventListener('submit',e=>{e.preventDefault();qRunSimulation();});
+$('quotaConfig').addEventListener('input',e=>{
+ if(e.target.matches('[data-field="unit"]')){const row=e.target.closest('.quota-rule'),mode=row.querySelector('[data-field="mode"]');mode.disabled=e.target.value==='month';if(mode.disabled)mode.value='calendar';}
+ if(e.target.matches('[data-field="repeat"]'))e.target.closest('.peak-row').querySelector('[data-date-wrap]').hidden=e.target.value!=='once';
+ qUpdateEstimate();
+});
+$('addRule').addEventListener('click',()=>{if($('quotaRules').children.length>=12){notify('En fazla 12 limit ekleyebilirsiniz.');return;}$('quotaRules').insertAdjacentHTML('beforeend',qRuleMarkup({enabled:true,limit:1000,unit:'hour',mode:'calendar'}));qUpdateEstimate();});
+$('quotaRules').addEventListener('click',e=>{const b=e.target.closest('[data-remove-rule]');if(b){b.closest('.quota-rule').remove();qUpdateEstimate();}});
+$('addPeak').addEventListener('click',()=>{if($('quotaPeaks').children.length>=12){notify('En fazla 12 pik ekleyebilirsiniz.');return;}$('quotaPeaks').insertAdjacentHTML('beforeend',qPeakMarkup({start:'09:00',end:'10:00',amount:500,repeat:'all'}));qUpdateEstimate();});
+$('quotaPeaks').addEventListener('click',e=>{const b=e.target.closest('[data-remove-peak]');if(b){b.closest('.peak-row').remove();qUpdateEstimate();}});
+$('qFilter').addEventListener('change',()=>{qPage=0;qRenderLog();});$('qBin').addEventListener('change',qRenderChart);$('qPrev').addEventListener('click',()=>{qPage--;qRenderLog();});$('qNext').addEventListener('click',()=>{qPage++;qRenderLog();});
+$('qCSV').addEventListener('click',()=>{if(qLast)download(qCSV(qFiltered(),qLastConfig),'text/csv;charset=utf-8','quota-results.csv');});
+$('quotaExample').addEventListener('click',()=>{qWrite(qValidate(QDEFAULTS));qRunSimulation();});
+$('qSave').addEventListener('click',()=>{try{const q=qRead();qPlan(q);download(JSON.stringify({version:3,kind:'quota',config:q},null,2),'application/json','quota-plan.json');}catch(e){notify(e.message);}});
+$('qLoad').addEventListener('click',()=>$('qFile').click());
+$('qFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;try{if(file.size>300000)throw Error('Dosya en fazla 300 KB olabilir.');const data=JSON.parse(await file.text());if(data.version!==3||data.kind!=='quota')throw Error('v3 kota planı bekleniyor.');const q=qValidate(data.config);qPlan(q);qWrite(q);qRunSimulation();notify('Kota planı yüklendi.');}catch(err){notify('Plan açılamadı: '+err.message);}finally{e.target.value='';}});
+let initialQuota=QDEFAULTS;try{const saved=JSON.parse($('quotaInitial').textContent);if(saved)initialQuota=qValidate(saved);}catch(e){notify('Kayıtlı kota planı geçersiz; örnek plan açıldı.');}
+qWrite(qValidate(initialQuota));$('qResults').hidden=true;if($('quotaTab').classList.contains('active'))selectLab(true);
+
+</script></body></html>

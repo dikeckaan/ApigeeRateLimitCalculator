@@ -1,0 +1,26 @@
+{
+  "name": "apigeeratelimitcalculator",
+  "version": "3.0.0",
+  "description": "Offline single-HTML Apigee Spike Arrest, multi-window quota and peak traffic lab",
+  "scripts": {
+    "test": "node --test tests/*.test.cjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dikeckaan/ApigeeRateLimitCalculator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/dikeckaan/ApigeeRateLimitCalculator/issues"
+  },
+  "homepage": "https://github.com/dikeckaan/ApigeeRateLimitCalculator#readme",
+  "devDependencies": {
+    "jsdom": "^30.0.1"
+  },
+  "private": true,
+  "engines": {
+    "node": ">=22.13.0"
+  }
+}
