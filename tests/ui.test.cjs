@@ -183,3 +183,28 @@ test('imported CSV content cannot inject HTML or spreadsheet formulas and is omi
   x.$('aClear').click();assert(!x.$('aPreviewRows').textContent.includes('PRIVATE_SENTINEL'));assert.equal(x.$('advisorConfig').hidden,true);assert.deepEqual(x.errors,[]);
  }finally{x.w.close();offline?.w.close();}
 });
+test('Edge Private Cloud limit plan transfers weekly rules and editable Spike Arrest without losing traffic; undo restores destination',()=>{
+ const x=open();try{
+ assert.match(x.$('model').selectedOptions[0].textContent,/Edge Private Cloud/);
+ assert.equal(x.$('planRules').children.length,4);assert.match(x.$('pPreview').textContent,/Combined preview/);
+ x.input('qBase',100);x.input('qBaseUnit','total');x.input('qSeedMode','fixed');x.input('qSeed',123);
+ x.input('rate',7);x.input('mps',3);
+ x.$('pTransfer').click();assert.equal(x.$('quotaLab').hidden,false);assert.equal(x.$('qSpikeEnabled').checked,true);assert.equal(x.$('qSpikeRate').value,'7');assert.equal(x.$('qSpikeMps').value,'3');
+ assert.equal(x.$('qBase').value,'100');assert.equal(x.$('qSeed').value,'123');assert.equal(x.$('quotaPeaks').children.length,2);
+ assert.equal(x.$('quotaRules').children[2].querySelector('[data-field="unit"]').value,'week');
+ x.input('qSpikeRate',9);assert.equal(x.$('rate').value,'7');assert.equal(x.$('qStale').hidden,false);
+ x.$('pUndo').click();assert.equal(x.$('qSpikeEnabled').checked,false);assert.equal(x.$('quotaRules').children.length,5);
+ assert.deepEqual(x.errors,[]);
+ }finally{x.w.close();}
+});
+test('source plan and chained destination survive offline HTML and scenario exports',async()=>{
+ const x=open();let y;try{
+ const row=x.$('planRules').children[2];row.querySelector('[data-field="limit"]').value='4321';row.dispatchEvent(new x.w.Event('input',{bubbles:true}));
+ x.$('pTransfer').click();x.$('saveConfig').click();const saved=JSON.parse(await x.blobText(x.blobs.at(-1)));assert.equal(saved.limitPlan.rules[2].limit,4321);
+ x.$('downloadHtml').click();y=open(await x.blobText(x.blobs.at(-1)));
+ assert.equal(y.$('planRules').children[2].querySelector('[data-field="limit"]').value,'4321');assert.equal(y.$('qSpikeEnabled').checked,true);assert.match(y.$('qSpikeSummary').textContent,/Edge Private Cloud/);assert.equal(y.$('downloadHtml'),null);assert.deepEqual(y.errors,[]);
+ }finally{x.w.close();y?.w.close();}
+});
+test('invalid source rules cannot transfer or export a stale plan',()=>{
+ const x=open();try{const f=x.$('planRules').querySelector('[data-field="limit"]');f.value='0';f.dispatchEvent(new x.w.Event('input',{bubbles:true}));assert.equal(x.$('pTransfer').disabled,true);x.$('saveConfig').click();assert.equal(x.downloads.length,0);assert.match(x.$('notice').textContent,/Limit 1/);assert.deepEqual(x.errors,[]);}finally{x.w.close();}
+});
