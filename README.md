@@ -118,3 +118,5 @@ Both editions include matching light and dark palettes. The header button cycles
 ## Target settings helper
 
 The Full Spike Arrest workspace includes **Suggest settings for a target**. Enter a maximum allowance per second, minute, hour, day, week or month and the available MP count. The helper proposes rounded-down shared/per-MP smoothing rates, traffic intervals and separate Quota configuration guidance. Applying a recommendation creates a 40-request steady Edge scenario; it does not deploy policies or alter the quota planner. Rates are nominal averages, not strict distributed window guarantees.
+
+The target helper also supports **Random arrivals across the selected period**. It distributes the exact target count (maximum 10,000) uniformly in that duration with a selectable seed, previews rejections at the recommended rate, and applies the same sample as custom timestamps. Random mode generates a seed for each new sample; Fixed mode repeats it. The helper does not increase the rate to accommodate bursts or present a single sample as a forecast.

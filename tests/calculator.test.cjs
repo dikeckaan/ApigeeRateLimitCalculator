@@ -79,3 +79,7 @@ test('target recommendations round down, handle low per-MP rates and use real ca
  const feb=scope.suggest({count:100,unit:'month',month:'2028-02',mps:2});assert.equal(feb.period,29*86400000);assert.equal(feb.shared,null);
  assert.throws(()=>scope.suggest({count:1,unit:'month',month:'2026-13',mps:1}));
 });
+test('target random arrivals are exact, repeatable, sorted and inside the selected period',()=>{
+ const scope=vm.createContext({Intl});vm.runInContext(source.split('// UI only below this marker')[0]+'\nthis.api={targetSuggestion,targetRandomTimes};',scope);const a=scope.api,t=a.targetSuggestion({count:10000,unit:'month',month:'2028-02',mps:3}),rows=a.targetRandomTimes(t,42);
+ assert.equal(rows.length,10000);assert.deepEqual(rows,a.targetRandomTimes(t,42));assert.notDeepEqual(rows,a.targetRandomTimes(t,43));rows.forEach((v,i)=>{assert(v>=0&&v<t.period);assert(i===0||v>=rows[i-1]);});assert.throws(()=>a.targetRandomTimes({...t,count:10001},42),/10,000/);assert.throws(()=>a.targetRandomTimes(t,-1),/Sample seed/);
+});

@@ -191,3 +191,11 @@ test('target helper recommends combinations, applies a steady scenario and leave
  x.input('targetCount',0);assert.equal(x.$('targetApply').disabled,true);assert.match(x.$('targetResult').textContent,/Target request count/);assert.deepEqual(x.errors,[]);
  }finally{x.w.close();}
 });
+test('random target sample preview matches applied custom traffic and survives offline export',async()=>{
+ const x=open();let y;try{x.input('targetSeedMode','fixed');x.input('targetSeed',42);x.input('targetArrival','random');const preview=x.$('targetResult').textContent;assert.match(preview,/Random sample · seed 42/);const accepted=preview.match(/([\d,]+) accepted \(200\)/)[1];x.$('targetApply').click();assert.equal(x.$('traffic').value,'custom');assert.equal(x.$('total').textContent,'100');assert.equal(x.$('passed').textContent,accepted);const times=x.$('timestamps').value;
+ x.$('targetNewSample').click();x.$('targetApply').click();assert.equal(x.$('timestamps').value,times);
+ x.input('targetSeedMode','random');const old=x.$('targetSeed').value;x.$('targetNewSample').click();assert.notEqual(x.$('targetSeed').value,old);const seed=x.$('targetSeed').value;x.input('targetMPs',3);assert.equal(x.$('targetSeed').value,seed);
+ x.$('downloadHtml').click();y=open(await x.blobText(x.blobs.at(-1)));assert.equal(y.$('targetSeedMode').value,'fixed');assert.equal(y.$('targetSeed').value,seed);assert.equal(y.$('targetResult').textContent,x.$('targetResult').textContent);
+ x.input('targetCount',10001);assert.equal(x.$('targetApply').disabled,true);assert.match(x.$('targetResult').textContent,/no sampling/i);assert.deepEqual(x.errors,[]);assert.deepEqual(y.errors,[]);
+ }finally{x.w.close();y?.w.close();}
+});
