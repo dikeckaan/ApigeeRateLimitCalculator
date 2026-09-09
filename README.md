@@ -110,3 +110,7 @@ SHA-256: `226a51538c7472dbac465405247a700a923799695546288b13137841259df081`
 Open [lite.html](https://kaandikec.com/ApigeeRateLimitCalculator/lite.html) for a simpler Edge Private Cloud Spike Arrest calculator. Three primary inputs cover rate, MP count and request interval. Request count, UseEffectiveCount and routing live under More options. Every request has a selectable explanation, and three examples illustrate steady traffic, overload and simultaneous arrivals.
 
 Lite is a separate, self-contained HTML file with no runtime dependencies. Download HTML preserves settings and removes the download button and full-lab navigation from the offline copy. The full lab remains available at the main URL.
+
+## Appearance
+
+Both editions include matching light and dark palettes. The header button cycles System → Light → Dark; System is the default and reacts to operating-system changes. Preferences are shared between editions through browser local storage and synchronized across tabs. Storage restrictions do not prevent switching themes. Offline HTML retains its selected mode, with System continuing to follow the device. Theme changes do not rerun simulations.
