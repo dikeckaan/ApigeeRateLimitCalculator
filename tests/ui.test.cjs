@@ -204,6 +204,7 @@ test('quota XML generation exports valid individual files and a manifest, and in
  const parse=text=>new x.w.DOMParser().parseFromString(text,'application/xml');assert.equal(parse(x.$('qPolicyXML').value).querySelector('parsererror'),null);
  x.$('qPolicyFile').value='2';x.$('qPolicyFile').dispatchEvent(new x.w.Event('change'));assert.match(x.$('qPolicyXML').value,/<TimeUnit>hour<\/TimeUnit>/);
  x.$('qPolicyDownload').click();assert.equal(x.downloads.at(-1).name,'Quota-03-hour.xml');assert.equal(parse(await x.blobText(x.blobs.at(-1))).documentElement.tagName,'Quota');
+ x.$('qPolicyZIP').click();assert.equal(x.downloads.at(-1).name,'edge-quota-policy-files.zip');assert.equal(x.blobs.at(-1).type,'application/zip');
  x.$('qPolicyBundle').click();const manifest=JSON.parse(await x.blobText(x.blobs.at(-1)));assert.equal(manifest.policies.length,5);for(const p of manifest.policies){assert.equal(parse(p.xml).querySelector('parsererror'),null);assert.equal(parse(p.xml).documentElement.getAttribute('name'),p.name);}
  x.input('qBase',10);assert.equal(x.$('qPolicyOutput').hidden,true);const count=x.downloads.length;x.$('qPolicyDownload').click();assert.equal(x.downloads.length,count);
  x.input('qIdentifier','bad"/><script>');x.$('qGenerate').click();assert.equal(x.$('qPolicyError').hidden,false);assert.equal(x.$('qPolicyOutput').hidden,true);assert.deepEqual(x.errors,[]);

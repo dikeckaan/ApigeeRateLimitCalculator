@@ -124,3 +124,5 @@ The target helper also supports **Random arrivals across the selected period**. 
 ## Edge Quota XML generation
 
 In Quotas / Peak traffic, generate one policy per enabled rule and copy/download each XML file, or download the complete file set and request-flow Steps as JSON. Sliding maps to rollingwindow; Calendar maps to default UTC boundaries. The UI and XML explain non-UTC alignment differences, per-MP second counters, distributed synchronous longer counters and sequential policy execution. This produces configuration files, not a deployed proxy or an exact reproduction of the atomic simulation.
+
+**Download all as ZIP** exports individual XML files in `policies/`, a request-flow fragment, README notes and a JSON manifest. It works offline with no additional dependencies. The archive is not a complete Apigee proxy bundle.
