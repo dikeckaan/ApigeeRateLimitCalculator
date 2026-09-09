@@ -27,7 +27,7 @@ Try **Window boundary**: at `2ps`, requests at `998, 999, 1000, 1001 ms` produce
 
 ## Quotas / Peak traffic
 
-Apply up to 12 enabled/disabled limits together, covering seconds, minutes, hours, days, weeks and calendar months. Use calendar or sliding windows for each rule; months support actual calendar windows only.
+Apply up to 12 enabled/disabled limits together, covering seconds, minutes, hours, days and calendar months. Use calendar or sliding windows for each rule; months support actual calendar windows only.
 
 - Date ranges, fixed UTC offsets and random or evenly spaced baseline traffic.
 - Baseline amount as a total or requests per minute/hour/day.
@@ -40,7 +40,7 @@ Apply up to 12 enabled/disabled limits together, covering seconds, minutes, hour
 
 The default busy-week plan generates **28,000 requests**: 2,000 baseline requests/day, 800 extra requests at 12:00–13:00 and 1,200 at 18:00–18:30, over seven days. Five rules evaluate that traffic.
 
-The cap is **100,000 requests / 366 days**, without hidden sampling. All active quota rules are evaluated atomically against one shared counter set. Use **Copy plan to Quotas / Peak traffic** to copy the source limits and Spike Arrest settings. Destination traffic, dates, peaks and seed are preserved. Copies remain independently editable; the last transfer can be undone. An optional upstream Spike Arrest stage runs before the atomic quota checks. Spike Arrest rejections never reach quotas; later quota rejections still consume Spike Arrest capacity.
+The cap is **100,000 requests / 366 days**, without hidden sampling. All active quota rules are evaluated atomically against one shared counter set. The quota workspace is independent of the Spike Arrest workspace.
 
 ## Random and fixed seeds
 
@@ -104,11 +104,3 @@ SHA-256: `226a51538c7472dbac465405247a700a923799695546288b13137841259df081`
 - [Apigee X / hybrid SpikeArrest](https://docs.cloud.google.com/apigee/docs/api-platform/reference/policies/spike-arrest-policy)
 - [Apigee Quota policy](https://docs.cloud.google.com/apigee/docs/api-platform/reference/policies/quota-policy)
 - [General rate limiting algorithms](https://redis.io/tutorials/howtos/ratelimiting/)
-
-### Edge Private Cloud workflow (v3.3)
-
-Edge Private Cloud is the primary/default product. The first workspace includes a simultaneous limit plan with second, minute, hour, day, week and month quotas and a combined preview using the selected Spike Arrest traffic. Calendar weeks reset Sunday at 00:00 in the selected fixed offset; sliding weeks last seven days. UTC matches Edge default weekly alignment.
-
-SpikeArrest Rate remains ps/pm; longer periods are separate quota rules. Shared second-window quotas are a generic planning model (Edge second quotas do not support distributed counters). The planner does not emulate full sequential Edge Quota flows, synchronization or StartTime semantics. Source scenario JSON, destination plan JSON and the offline HTML preserve the new settings.
-
-Pre-change backup: `backups/rate-limit-lab-v3.2.html`.

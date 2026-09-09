@@ -56,21 +56,3 @@ test('invalid dates, month sliding, malformed rules and oversized simulations ar
 test('100,000 requests evaluated without sampling',()=>{
  const q=config({base:100000,baseUnit:'total',peaks:[],rules:[rule(100000,'month')]});const result=a.qSimulate(q);assert.equal(result.rows.length,100000);assert(result.rows.every(r=>r.status===200));
 });
-test('calendar weeks reset on Sunday in the selected offset, including year boundaries',()=>{
- const b=a.qBounds(Date.parse('2027-01-01T12:00:00Z'),'week',3);
- assert.equal(b.start,Date.parse('2026-12-26T21:00:00Z'));assert.equal(b.end,Date.parse('2027-01-02T21:00:00Z'));
- const q=config({start:'2026-09-05T23:59',end:'2026-09-06T00:01',rules:[rule(1,'week')]});
- assert.deepEqual(Array.from(a.qSimulate(q,events(q,[0,59999,60000])).rows,r=>r.status),[200,429,200]);
-});
-test('sliding week expires exactly seven days after acceptance',()=>{
- const q=config({rules:[rule(1,'week','sliding')]});
- assert.deepEqual(Array.from(a.qSimulate(q,events(q,[0,7*86400000-1,7*86400000])).rows,r=>r.status),[200,429,200]);
-});
-test('Spike Arrest runs before quotas, with consumption retained on a later quota rejection',()=>{
- const q=config({timezone:0,spike:{model:'edge',rate:1,unit:'ps',mps:1,effective:false},rules:[rule(1,'minute')]});
- const result=a.qSimulate(q,events(q,[0,500,59500,60000,60500]));
- assert.deepEqual(Array.from(result.rows,r=>r.status),[200,429,429,429,200]);
- assert.deepEqual(Array.from(result.rows,r=>Array.from(r.violations)),[[],[-1],[0],[-1],[]]);
- assert.match(a.qCSV(result.rows,q),/Spike Arrest/);
- const attempts=config({...q,counting:'attempts'});assert.equal(a.qSimulate(attempts,events(attempts,[0,10,20])).stats[0].maximum,1);
-});
