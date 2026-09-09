@@ -72,3 +72,10 @@ test('CSV contains all 10,000 results including wait and status',()=>{
 test('initial version backup is byte-for-byte preserved',()=>{
  const crypto=require('node:crypto');const digest=crypto.createHash('sha256').update(fs.readFileSync(path.join(__dirname,'../backups/spike-arrest-v1.html'))).digest('hex');assert.equal(digest,'226a51538c7472dbac465405247a700a923799695546288b13137841259df081');
 });
+test('target recommendations round down, handle low per-MP rates and use real calendar months',()=>{
+ const scope=vm.createContext({Intl});vm.runInContext(source.split('// UI only below this marker')[0]+'\nthis.suggest=targetSuggestion;',scope);
+ const a=scope.suggest({count:1,unit:'second',mps:2});assert.equal(a.shared.rate,1);assert.equal(a.shared.unit,'ps');assert.equal(a.perMP.rate,30);assert.equal(a.perMP.unit,'pm');
+ const b=scope.suggest({count:101,unit:'minute',mps:3});assert.equal(b.perMP.nominal,99);assert.equal(b.shared.nominal,101);
+ const feb=scope.suggest({count:100,unit:'month',month:'2028-02',mps:2});assert.equal(feb.period,29*86400000);assert.equal(feb.shared,null);
+ assert.throws(()=>scope.suggest({count:1,unit:'month',month:'2026-13',mps:1}));
+});

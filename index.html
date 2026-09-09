@@ -41,6 +41,12 @@
 <p data-online-only><a href="./lite.html">Prefer a simpler calculator? Open Lite →</a></p>
 <nav class="lab-tabs" aria-label="Workspace"><button type="button" id="spikeTab" class="active" aria-pressed="true">Spike Arrest / Algorithms</button><button type="button" id="quotaTab" aria-pressed="false">Quotas / Peak traffic</button><button type="button" id="advisorTab" aria-pressed="false">CSV / Limit advisor</button><button type="button" id="guideTab" aria-pressed="false">User guide <span>20 CHAPTERS</span></button></nav>
 <section id="spikeLab">
+<details class="panel" id="targetHelper" style="margin-bottom:20px"><summary>Suggest settings for a target · max requests per period</summary>
+<p>Enter your total allowance across MPs. Get a starting combination for Edge Private Cloud and an evenly spaced traffic scenario.</p>
+<div class="quota-options"><div><label for="targetCount">Maximum requests in the period</label><input id="targetCount" type="number" min="1" max="1000000000" step="1" value="100"></div><div><label for="targetUnit">Period</label><select id="targetUnit"><option value="second">1 second</option><option value="minute">1 minute</option><option value="hour">1 hour</option><option value="day">1 day</option><option value="week">1 week</option><option value="month">1 calendar month</option></select></div><div><label for="targetMPs">Available Message Processors</label><input id="targetMPs" type="number" min="1" max="1000" step="1" value="2"></div><div id="targetMonthField" hidden><label for="targetMonth">Month used for the average</label><input id="targetMonth" type="month" value="2026-09"></div></div>
+<div id="targetResult" role="status"></div><button type="button" id="targetApply">Try recommended Spike Arrest settings →</button>
+<p class="hint">Suggestions describe nominal average capacity, not a guaranteed maximum in every time window. MPs can accept simultaneously when ready. Enforce minute/hour/day/week/month consumption with a separate Quota policy; choose its reset behavior and counter scope explicitly. A strict shared second-window maximum is not guaranteed by Edge smoothing. This helper does not change or deploy Quota policies.</p>
+<p class="hint"><a href="https://docs.apigee.com/api-platform/reference/policies/spike-arrest-policy" target="_blank" rel="noopener noreferrer">Edge SpikeArrest</a> · <a href="https://docs.apigee.com/api-platform/reference/policies/quota-policy" target="_blank" rel="noopener noreferrer">Edge Quota</a></p></details>
 <div class="layout">
 <form class="panel controls" id="config" novalidate>
 <span class="step">01 / CONFIGURATION</span><h2>Traffic scenario</h2>
@@ -258,7 +264,7 @@ Total traffic = baseline count + sum of all included peak counts</pre>
 <article class="guide-chapter" id="guide-saving"><h2>13. Save, export and work offline</h2>
 <h3>Download the complete HTML</h3><p>The header’s <b>Download HTML</b> button creates one standalone file with all workspaces, this entire guide and your current simulation settings. Imported advisor traffic and results are intentionally omitted. Seeds are saved as Fixed for replay. The downloaded copy omits the HTML download button, but keeps scenario/plan saving, CSV export, guide search and printing. Open the file directly in a modern browser; no installation or server is required.</p>
 <p>Both workspaces must contain valid settings before the HTML snapshot can be created. A downloaded file captures the settings, not a permanent database of runs. Calculations are reconstructed when its workspace opens. Save again from the hosted page if you need a new HTML snapshot.</p>
-<h3>Appearance</h3><p>The header theme button cycles through <b>System → Light → Dark</b>. System follows your operating system, including changes while the page is open. Your choice is shared between Full and Lite in this browser when storage is available. Downloaded HTML retains the selected mode; System still follows the device on which it opens. Theme changes do not regenerate traffic or change simulation results.</p><h3>Scenario and plan JSON files</h3><p><b>Save scenario / Open scenario</b> belong to Spike Arrest and use version 2 JSON. <b>Save plan / Open plan</b> belong to Quotas and use version 3 JSON with <code>kind: "quota"</code>. These file types are not interchangeable. Existing v2/v3 files remain compatible; the optional seedMode field defaults to Fixed when absent. Imports validate the whole configuration before replacing your settings. Maximum file size is 300,000 bytes.</p>
+<h3>Suggest settings for a target</h3><p>At the top of Spike Arrest, expand <b>Suggest settings for a target</b>. Enter a maximum total, period and available MP count. For a month, select the actual month used to compute the average. The helper compares shared and per-MP integer rate combinations, rounded down. It also explains the separate Quota settings needed for longer-term consumption. A nominal average is not a strict maximum under arbitrary bursts. <b>Try recommended Spike Arrest settings</b> replaces the short scenario with Edge, shared rate, round-robin routing and 40 evenly spaced requests; Quotas remain unchanged. Target helper inputs are retained in Download HTML, but are not part of scenario JSON.</p><h3>Appearance</h3><p>The header theme button cycles through <b>System → Light → Dark</b>. System follows your operating system, including changes while the page is open. Your choice is shared between Full and Lite in this browser when storage is available. Downloaded HTML retains the selected mode; System still follows the device on which it opens. Theme changes do not regenerate traffic or change simulation results.</p><h3>Scenario and plan JSON files</h3><p><b>Save scenario / Open scenario</b> belong to Spike Arrest and use version 2 JSON. <b>Save plan / Open plan</b> belong to Quotas and use version 3 JSON with <code>kind: "quota"</code>. These file types are not interchangeable. Existing v2/v3 files remain compatible; the optional seedMode field defaults to Fixed when absent. Imports validate the whole configuration before replacing your settings. Maximum file size is 300,000 bytes.</p>
 <pre>{
   "version": 2,
   "config": {
@@ -598,6 +604,14 @@ function aReplay(rows,rules,timezone){
  return {accepted,rejected:rows.reduce((n,r)=>n+r.count,0)-accepted};
 }
 
+function targetSuggestion(raw){
+ const count=qInteger(raw.count,1,1000000000,'Target request count'),mps=qInteger(raw.mps,1,1000,'Target MP count');
+ const periods={second:1000,minute:60000,hour:3600000,day:86400000,week:604800000};let period=periods[raw.unit];
+ if(raw.unit==='month'){if(!/^20\d\d-(0[1-9]|1[0-2])$/.test(raw.month))throw Error('Choose a month between 2000 and 2099.');const [y,m]=raw.month.split('-').map(Number);period=Date.UTC(y,m,1)-Date.UTC(y,m-1,1);}else if(!period)throw Error('Choose a valid target period.');
+ function candidate(divisor){let rate=Math.floor(count*60000/(period*divisor)),unit='pm';if(raw.unit==='second'&&count*1000/(period*divisor)>=1||rate>1000000){rate=Math.floor(count*1000/(period*divisor));unit='ps';}if(rate<1||rate>1000000)return null;const interval=(unit==='ps'?1000:60000)/(rate*divisor);return {rate,unit,interval,nominal:rate*divisor*period/(unit==='ps'?1000:60000)};}
+ return {count,mps,unit:raw.unit,period,interval:period/count,shared:candidate(1),perMP:candidate(mps)};
+}
+
 // UI only below this marker; the simulation above has no DOM or network dependency.
 const $=id=>document.getElementById(id);
 let current=null,currentConfig=null,noticeTimer;
@@ -687,6 +701,21 @@ $('configFile').addEventListener('change',async e=>{
  catch(err){notify('Could not open scenario: '+err.message);}finally{e.target.value='';}
 });
 update();
+
+let targetLast=null;
+function targetUpdate(){
+ $('targetMonthField').hidden=$('targetUnit').value!=='month';
+ try{const t=targetSuggestion({count:$('targetCount').value,unit:$('targetUnit').value,mps:$('targetMPs').value,month:$('targetMonth').value});targetLast=t;
+ const rows=[[true,t.shared],[false,t.perMP]].map(([effective,c])=>`<tr><td>${effective?'Recommended · shared rate':'Alternative · rate per MP'}</td><td>${c?c.rate+c.unit:'Not representable'}</td><td>${effective}</td><td>${c?fmt(c.nominal):'—'}</td></tr>`).join('');
+ $('targetResult').innerHTML=`<p><b>${fmt(t.count)} requests / ${t.unit}</b> across ${t.mps} MPs. Even traffic at this target: one request every <b>${fmt(t.interval)} ms</b>${t.unit==='month'?` (${t.period/86400000} days in the selected month)`:''}.</p><div class="tablewrap"><table><thead><tr><th>Combination</th><th>Spike Arrest Rate</th><th>UseEffectiveCount</th><th>Nominal requests / target period</th></tr></thead><tbody>${rows}</tbody></table></div><p>${t.shared?`Use ${t.mps} MPs with round-robin routing. The recommended simulation interval is ${fmt(t.shared.interval)} ms, based on the rounded rate.`:'This target is outside the supported integer Spike Arrest rate range (1–1,000,000 ps/pm). No rate will be applied.'} ${t.unit==='second'?'For bursts, verify actual Edge runtime behavior; a nominal 100ps does not imply a shared counter of 100 per second.':`For the consumption ceiling, use a separate Quota with Allow=${t.count}, Interval=1, TimeUnit=${t.unit}. For a shared multi-MP counter, assess Distributed=true and Synchronous=true, and use the intended Identifier scope. Choose default fixed UTC boundaries or a supported rolling window according to your contract.`}</p><p class="hint">Rates are rounded down, so they may underuse your allowance. A per-MP alternative depends on the MP count staying unchanged. Monthly averages depend on the selected month; the Quota policy still requires its own reset configuration. Backend capacity is not estimated.</p>`;
+ $('targetApply').disabled=!t.shared||t.shared.interval>3600000;
+ if(t.shared&&t.shared.interval>3600000)$('targetResult').insertAdjacentHTML('beforeend','<p>The suggested interval exceeds this simulator’s one-hour interval limit.</p>');
+ }catch(e){targetLast=null;$('targetResult').textContent=e.message;$('targetApply').disabled=true;}
+}
+$('targetHelper').addEventListener('input',targetUpdate);
+$('targetApply').addEventListener('click',()=>{if(!targetLast?.shared)return;const t=targetLast,c=t.shared;write({...DEFAULTS,model:'edge',rate:c.rate,unit:c.unit,mps:t.mps,effective:true,routing:'round',traffic:'steady',interval:c.interval,count:40});update();notify('Applied the recommended Edge combination with 40 evenly spaced requests. Quota settings have not changed.');});
+targetUpdate();
+
 let qLast=null,qLastConfig=null,qPage=0,qRuleSerial=0,qPeakSerial=0;
 const QFIELDS={start:'qStart',end:'qEnd',timezone:'qTimezone',base:'qBase',baseUnit:'qBaseUnit',distribution:'qDistribution',seed:'qSeed',seedMode:'qSeedMode',counting:'qCounting'};
 const escapeHTML=v=>String(v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

@@ -183,3 +183,11 @@ test('imported CSV content cannot inject HTML or spreadsheet formulas and is omi
   x.$('aClear').click();assert(!x.$('aPreviewRows').textContent.includes('PRIVATE_SENTINEL'));assert.equal(x.$('advisorConfig').hidden,true);assert.deepEqual(x.errors,[]);
  }finally{x.w.close();offline?.w.close();}
 });
+test('target helper recommends combinations, applies a steady scenario and leaves quotas untouched',()=>{
+ const x=open();try{x.input('targetCount',100);x.input('targetMPs',4);x.$('targetApply').click();assert.equal(x.$('rate').value,'100');assert.equal(x.$('unit').value,'ps');assert.equal(x.$('mps').value,'4');assert.equal(x.$('interval').value,'10');assert.equal(x.$('passed').textContent,'40');assert.equal(x.$('quotaRules').children.length,5);
+ x.input('targetUnit','week');x.input('targetCount',604800);assert.match(x.$('targetResult').textContent,/60pm/);assert.match(x.$('targetResult').textContent,/TimeUnit=week/);
+ x.input('targetUnit','month');x.input('targetMonth','2028-02');assert.match(x.$('targetResult').textContent,/29 days/);
+ x.input('targetCount',1);assert.equal(x.$('targetApply').disabled,true);assert.match(x.$('targetResult').textContent,/Not representable/);
+ x.input('targetCount',0);assert.equal(x.$('targetApply').disabled,true);assert.match(x.$('targetResult').textContent,/Target request count/);assert.deepEqual(x.errors,[]);
+ }finally{x.w.close();}
+});

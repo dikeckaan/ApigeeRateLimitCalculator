@@ -114,3 +114,7 @@ Lite is a separate, self-contained HTML file with no runtime dependencies. Downl
 ## Appearance
 
 Both editions include matching light and dark palettes. The header button cycles System → Light → Dark; System is the default and reacts to operating-system changes. Preferences are shared between editions through browser local storage and synchronized across tabs. Storage restrictions do not prevent switching themes. Offline HTML retains its selected mode, with System continuing to follow the device. Theme changes do not rerun simulations.
+
+## Target settings helper
+
+The Full Spike Arrest workspace includes **Suggest settings for a target**. Enter a maximum allowance per second, minute, hour, day, week or month and the available MP count. The helper proposes rounded-down shared/per-MP smoothing rates, traffic intervals and separate Quota configuration guidance. Applying a recommendation creates a 40-request steady Edge scenario; it does not deploy policies or alter the quota planner. Rates are nominal averages, not strict distributed window guarantees.
