@@ -125,11 +125,11 @@ test('quota random mode draws only when run; fixed seeds and exported snapshots 
 });
 test('guide chapters, search, navigation, print and examples work',()=>{
  const x=open();try{
-  x.$('guideTab').click();assert.equal(x.$('userGuide').hidden,false);assert.equal(x.$('spikeLab').hidden,true);assert.equal(x.$('quotaLab').hidden,true);assert.equal(x.$('guideTOC').children.length,16);
+  x.$('guideTab').click();assert.equal(x.$('userGuide').hidden,false);assert.equal(x.$('spikeLab').hidden,true);assert.equal(x.$('quotaLab').hidden,true);assert.equal(x.$('guideTOC').children.length,20);
   const links=Array.from(x.$('guideTOC').children);links.forEach(a=>assert(x.w.document.querySelector(a.getAttribute('href'))));
   assert(x.$('userGuide').textContent.trim().split(/\s+/).length>3500);
   x.input('guideSearch','monthly reset');assert(links.some(a=>a.hidden));assert(links.some(a=>!a.hidden));
-  x.input('guideSearch','zzznomatchingchapter');assert.equal(x.$('guideEmpty').hidden,false);assert.equal(x.$('guideMatches').textContent,'0 of 16 chapters');
+  x.input('guideSearch','zzznomatchingchapter');assert.equal(x.$('guideEmpty').hidden,false);assert.equal(x.$('guideMatches').textContent,'0 of 20 chapters');
   x.$('clearGuide').click();assert(links.every(a=>!a.hidden));let printed=false;x.w.print=()=>{printed=true;};x.$('printGuide').click();assert.equal(printed,true);
   x.w.document.querySelector('[data-guide-example="boundary"]').click();assert.equal(x.$('spikeLab').hidden,false);assert.equal(x.$('passed').textContent,'2');
   assert.deepEqual(x.errors,[]);
@@ -138,7 +138,7 @@ test('guide chapters, search, navigation, print and examples work',()=>{
 test('guide deep links open the correct workspace and offline snapshots retain the complete guide',async()=>{
  const x=open(html,'https://example.test/#guide-seeds');let offline;try{
   assert.equal(x.$('userGuide').hidden,false);assert.equal(x.$('guide-seeds').hidden,false);assert.equal(x.$('guideTab').getAttribute('aria-pressed'),'true');
-  x.$('downloadHtml').click();offline=open(await x.blobText(x.blobs.at(-1)));assert.equal(offline.$('downloadHtml'),null);assert.equal(offline.$('userGuide').hidden,false);assert.equal(offline.$('guideTOC').children.length,16);offline.input('guideSearch','Poisson');assert.equal(offline.$('guideEmpty').hidden,true);assert.deepEqual(offline.errors,[]);
+  x.$('downloadHtml').click();offline=open(await x.blobText(x.blobs.at(-1)));assert.equal(offline.$('downloadHtml'),null);assert.equal(offline.$('userGuide').hidden,false);assert.equal(offline.$('guideTOC').children.length,20);offline.input('guideSearch','Poisson');assert.equal(offline.$('guideEmpty').hidden,true);assert.deepEqual(offline.errors,[]);
  }finally{x.w.close();offline?.w.close();}
 });
 test('guide JSON examples load and legacy files default to fixed seeds',()=>{
@@ -149,4 +149,37 @@ test('guide JSON examples load and legacy files default to fixed seeds',()=>{
   assert.throws(()=>x.w.validateConfig({seedMode:'invalid'}));assert.throws(()=>x.w.qValidate({seedMode:'invalid'}));
   assert.deepEqual(x.errors,[]);
  }finally{x.w.close();}
+});
+
+test('CSV advisor loads examples, maps Edge columns and analyzes supported periods',()=>{
+ const x=open();try{
+  x.$('advisorTab').click();assert.equal(x.$('advisorLab').hidden,false);assert.equal(x.$('spikeLab').hidden,true);
+  x.$('aEventSample').click();assert.equal(x.$('aMode').value,'events');assert.equal(x.$('aMap-api').value,'1');assert.equal(x.$('aError').hidden,true);
+  x.$('advisorConfig').dispatchEvent(new x.w.Event('submit',{cancelable:true}));assert.equal(x.$('aResults').hidden,false);assert.equal(x.$('aAnalyzedCount').textContent,'720');assert.equal(x.$('aRecommendations').children.length,5);assert.match(x.$('aRecommendations').textContent,/No complete calendar period/);
+  x.$('aBucketSample').click();assert.equal(x.$('aMode').value,'buckets');assert.equal(x.$('aBucket').value,'3600000');x.$('advisorConfig').dispatchEvent(new x.w.Event('submit',{cancelable:true}));assert.match(x.$('aRecommendations').textContent,/Source buckets are coarser/);assert.deepEqual(x.errors,[]);
+ }finally{x.w.close();}
+});
+test('CSV advisor exclusions and per-API scope affect recommendations and report metadata',async()=>{
+ const x=open();try{
+  x.$('advisorTab').click();x.$('aEventSample').click();x.$('aAddExclude').click();const rule=x.$('aExclusions').firstElementChild;rule.querySelector('[data-a-field]').value='path';rule.querySelector('[data-a-op]').value='prefix';rule.querySelector('[data-a-value]').value='/health';
+  x.input('aScope','api');x.$('advisorConfig').dispatchEvent(new x.w.Event('submit',{cancelable:true}));assert.equal(x.$('aExcludedCount').textContent,'180');assert.equal(x.$('aKeptCount').textContent,'540');assert.equal(x.$('aGroup').options.length,2);assert.equal(x.$('aAnalyzedCount').textContent,'360');
+  x.$('aExportJSON').click();const report=JSON.parse(await x.blobText(x.blobs.at(-1)));assert.equal(report.scope,'api');assert.equal(report.filters[0].value,'/health');assert.equal(report.traffic.excludedRequests,180);assert(!Object.hasOwn(report,'rows'));
+  x.input('aHeadroom',30);assert.equal(x.$('aStale').hidden,false);assert.deepEqual(x.errors,[]);
+ }finally{x.w.close();}
+});
+test('invalid CSV rows require explicit skipping and unmapped exclusion fields are blocked',()=>{
+ const x=open();try{
+  x.$('advisorTab').click();x.$('aPaste').value='timestamp,apiproxy\n2026-09-01T00:00:00Z,a\nBAD,a';x.$('aLoadPaste').click();assert.match(x.$('aValidation').textContent,/1 invalid/);x.$('advisorConfig').dispatchEvent(new x.w.Event('submit',{cancelable:true}));assert.match(x.$('aError').textContent,/explicitly allow/);
+  x.$('aSkipInvalid').checked=true;x.$('advisorConfig').dispatchEvent(new x.w.Event('submit',{cancelable:true}));assert.equal(x.$('aResults').hidden,false);
+  x.$('aAddExclude').click();const r=x.$('aExclusions').firstElementChild;r.querySelector('[data-a-field]').value='developer';r.querySelector('[data-a-value]').value='internal';x.$('advisorConfig').dispatchEvent(new x.w.Event('submit',{cancelable:true}));assert.match(x.$('aError').textContent,/Map the developer/);assert.deepEqual(x.errors,[]);
+ }finally{x.w.close();}
+});
+test('imported CSV content cannot inject HTML or spreadsheet formulas and is omitted from offline HTML',async()=>{
+ const x=open();let offline;try{
+  x.$('advisorTab').click();x.$('aPaste').value='timestamp,apiproxy\n2026-09-01T00:00:00Z,=PRIVATE_SENTINEL\n2026-09-01T00:00:01Z,<img src=x onerror=alert(1)>';x.$('aLoadPaste').click();x.input('aScope','api');x.$('advisorConfig').dispatchEvent(new x.w.Event('submit',{cancelable:true}));assert.equal(x.$('aPreviewRows').querySelector('img'),null);assert.equal(x.$('aGroup').querySelector('img'),null);
+  assert.equal(x.w.aCsvCell('=SUM(1)'), '"\'=SUM(1)"');
+  x.$('aExportCSV').click();const csv=await x.blobText(x.blobs.at(-1));assert(!csv.includes(',"=PRIVATE_SENTINEL"'));
+  x.$('downloadHtml').click();const text=await x.blobText(x.blobs.at(-1));assert(!text.includes('PRIVATE_SENTINEL'));assert(!text.includes('<img src=x onerror=alert(1)>'));offline=open(text);assert.equal(offline.$('advisorLab').hidden,false);assert.equal(offline.$('advisorConfig').hidden,true);assert.equal(offline.$('aPaste').value,'');assert.deepEqual(offline.errors,[]);
+  x.$('aClear').click();assert(!x.$('aPreviewRows').textContent.includes('PRIVATE_SENTINEL'));assert.equal(x.$('advisorConfig').hidden,true);assert.deepEqual(x.errors,[]);
+ }finally{x.w.close();offline?.w.close();}
 });

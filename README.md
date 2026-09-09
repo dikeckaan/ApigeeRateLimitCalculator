@@ -50,9 +50,26 @@ Switching Random to Fixed retains the displayed seed. Saved JSON and HTML snapsh
 
 ## Detailed user guide
 
-The in-app **User guide** includes 16 searchable chapters, a table of contents, direct chapter links, seven worked experiments, JSON examples, a glossary and troubleshooting. It is included in every offline HTML snapshot and has a print layout.
+The in-app **User guide** includes 20 searchable chapters, a table of contents, direct chapter links, seven worked experiments, JSON examples, a glossary and troubleshooting. It is included in every offline HTML snapshot and has a print layout.
 
 The guide covers every input, request-generation formulas, algorithm boundaries, MP capacity, quota accounting, time zones, calendar months, peak recurrence/proration, seed modes, exports and practical limits. Open `#guide` or a chapter such as `#guide-seeds` on the hosted page.
+
+## CSV / Limit advisor
+
+Import a flat Edge request log or aggregate traffic CSV. The advisor supports automatic column aliases plus manual mapping, CSV/TSV delimiters, ISO/Unix timestamps, and explicit invalid-row handling. Included example files demonstrate both row types.
+
+- Exclude API proxies, developers, paths, apps, HTTP statuses or environments using exact/prefix/contains/* wildcard rules.
+- Normalize URL origins and query strings before path matching; inspect an exclusion audit with overlap-aware totals.
+- Analyze shared traffic or a selected API, developer, API+developer, app or path group.
+- Size candidates from complete calendar-bucket peaks, P99 or P95 plus configurable headroom.
+- Inspect standalone and combined calendar-counter replay counts.
+- Export a JSON analysis or recommendation CSV without raw traffic rows.
+
+Coarse source buckets never produce finer-period recommendations. Missing periods in the declared coverage count as zero; partial periods do not determine percentiles. A full month is required for monthly sizing. These are generic calendar limits, not validated Edge smoothing policies or production guarantees.
+
+Imported CSV and results remain in memory and are intentionally excluded from offline HTML snapshots. **Clear imported data** removes the current import. The advisor accepts up to 15 MB / 100,000 rows / 366 days and does not expand aggregate request counts into fabricated events.
+
+Open directly: https://kaandikec.com/ApigeeRateLimitCalculator/#advisor
 
 ## Model scope
 

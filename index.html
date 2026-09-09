@@ -14,12 +14,14 @@
 .seed-row{display:flex;gap:8px}.seed-row input{flex:1;width:0}.seed-row button{white-space:nowrap;font-size:12px}input[readonly]{color:#b0bdb6;background:#202722}
 
 .guide-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;margin-bottom:20px}.guide-heading h2{font-size:27px;max-width:780px;line-height:1.3}.guide-heading p{max-width:850px;margin-bottom:0}.guide-heading button{white-space:nowrap}.guide-tools{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);padding:14px 18px;border-radius:10px;margin-bottom:24px;flex-wrap:wrap}.guide-tools label{margin:0}.guide-tools input{flex:1;min-width:200px}.guide-tools button{white-space:nowrap}#guideMatches{font-size:12px;color:var(--muted)}.guide-layout{display:grid;grid-template-columns:225px minmax(0,1fr);gap:28px}.guide-toc{align-self:start;position:sticky;top:20px;max-height:calc(100vh - 40px);overflow:auto}.guide-toc>b{font:11px ui-monospace,monospace;letter-spacing:1px;color:var(--green)}.guide-toc nav{display:flex;flex-direction:column;margin-top:12px}.guide-toc a{font-size:12px;padding:7px 9px;color:var(--muted);text-decoration:none;border-left:1px solid var(--line)}.guide-toc a:hover{color:var(--green);background:#202920;border-color:var(--green)}.guide-chapter{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:26px 30px;margin-bottom:20px;scroll-margin-top:20px}.guide-chapter h2{font-size:22px;line-height:1.35;margin:0 0 16px}.guide-chapter h3{font-size:16px;margin:22px 0 10px}.guide-chapter p,.guide-chapter li,.guide-chapter dd{color:#c1cdcb;line-height:1.8}.guide-chapter p{margin:12px 0}.guide-chapter ul,.guide-chapter ol{padding-left:22px;margin:12px 0}.guide-chapter li{margin:9px 0}.guide-chapter code{font-size:12px;background:#101517;color:#d5efc2;padding:2px 5px;border-radius:4px}.guide-chapter pre{white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.7 ui-monospace,monospace}.guide-chapter table{white-space:normal;font-family:inherit;font-size:12px}.guide-chapter td:first-child{min-width:130px;color:var(--text)}.guide-chapter th{position:static;color:var(--green)}.guide-chapter .tablewrap{max-height:none}.guide-chapter td:last-child{min-width:180px}.guide-chapter a{color:var(--green)}.guide-chapter dt{font-weight:650;color:var(--text);margin-top:18px}.guide-chapter dd{margin:5px 0 14px}.guide-chapter button{margin:5px 0;color:var(--green)}@media(max-width:900px){.guide-layout{grid-template-columns:1fr}.guide-toc{position:static;max-height:220px;border:1px solid var(--line);padding:14px;border-radius:8px}.guide-toc nav{columns:2;display:block}.guide-toc a{display:block}.guide-heading{flex-direction:column}.guide-chapter{padding:20px}.guide-tools input{min-width:150px}}@media print{body{background:white!important;color:black!important;font-size:10pt}main{max-width:none;padding:0}main>header,.intro,.lab-tabs,#spikeLab,#quotaLab,#notice,.guide-tools,.guide-toc,#printGuide,#guideEmpty{display:none!important}#userGuide{display:block!important}.guide-layout{display:block}.guide-chapter{display:block!important;background:white;border:none;border-bottom:1px solid #ccc;padding:10pt 0;margin:0;break-inside:auto}.guide-chapter h2,.guide-chapter h3,.guide-chapter dt{color:black;break-after:avoid}.guide-chapter p,.guide-chapter li,.guide-chapter dd,.guide-heading p,.guide-chapter td,.guide-chapter th{color:black!important}.guide-chapter a{color:#222}.guide-chapter button{display:none}.guide-chapter pre,.guide-chapter code{background:#f5f5f5;color:black;white-space:pre-wrap}.guide-chapter tr{break-inside:avoid}.guide-chapter .tablewrap{overflow:visible}.guide-heading h2{font-size:22pt}.guide-chapter h2{font-size:16pt}}
+
+.advisor-note{background:#202b30;border-left:2px solid #91b4c9;color:#c2d5dd;font-size:12px;padding:13px 16px;margin:16px 0}.advisor-upload{display:grid;grid-template-columns:2fr 1fr;gap:20px}.advisor-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:4px 18px}.advisor-paste{margin-top:18px}.advisor-paste button{margin-top:8px}.check-label{display:flex;align-items:center;gap:9px;margin-top:14px}.check-label input[type=checkbox]{width:16px;height:16px;accent-color:var(--green)}.advisor-exclude{display:grid;grid-template-columns:1fr 1fr 2fr 36px;gap:10px;margin:10px 0}.advisor-exclude input,.advisor-exclude select{padding:8px}#aError{color:var(--red);border:1px solid #6b4440;padding:14px;border-radius:8px;margin-top:18px}#aStale{color:#ffd089;font-size:12px}#aGroup{max-width:400px}#aResults .tablewrap{max-height:420px}#aResults td{vertical-align:top}#aResults .stats strong{font-size:30px}#aInvalidRows{font-size:12px;color:var(--red)}#aValidation{margin:14px 0}@media(max-width:650px){.advisor-upload{grid-template-columns:1fr}.advisor-exclude{grid-template-columns:1fr 1fr 32px}.advisor-exclude input{grid-column:1/3;grid-row:2}.advisor-exclude button{grid-column:3;grid-row:1/3}#aGroup{max-width:100%}}@media print{#advisorLab{display:none!important}}
 </style>
 </head>
 <body><main>
 <header><div class="brand"><span class="mark">↯</span> API TRAFFIC LAB</div><button type="button" class="offline" id="downloadHtml" data-online-only title="Download a single HTML file with your current settings">↓ Download HTML</button></header>
-<div class="intro"><h1>API Rate Limit Lab <span class="subtle">/ Apigee</span></h1><p>Design traffic. Compare limits. Understand every 429. <span class="version">v3.1 · OFFLINE READY</span></p></div>
-<nav class="lab-tabs" aria-label="Workspace"><button type="button" id="spikeTab" class="active" aria-pressed="true">Spike Arrest / Algorithms</button><button type="button" id="quotaTab" aria-pressed="false">Quotas / Peak traffic</button><button type="button" id="guideTab" aria-pressed="false">User guide <span>16 CHAPTERS</span></button></nav>
+<div class="intro"><h1>API Rate Limit Lab <span class="subtle">/ Apigee</span></h1><p>Design traffic. Compare limits. Understand every 429. <span class="version">v3.2 · OFFLINE READY</span></p></div>
+<nav class="lab-tabs" aria-label="Workspace"><button type="button" id="spikeTab" class="active" aria-pressed="true">Spike Arrest / Algorithms</button><button type="button" id="quotaTab" aria-pressed="false">Quotas / Peak traffic</button><button type="button" id="advisorTab" aria-pressed="false">CSV / Limit advisor</button><button type="button" id="guideTab" aria-pressed="false">User guide <span>20 CHAPTERS</span></button></nav>
 <section id="spikeLab">
 <div class="layout">
 <form class="panel controls" id="config" novalidate>
@@ -89,14 +91,52 @@
 <section class="panel foot"><details><summary>Quota model scope and its relationship to Apigee</summary><p>This planner is a general multi-limit model with one shared set of counters. All rules are evaluated together. By default, a request increments every counter only if it passes every rule. With “All attempts”, rejected requests increment every counter as well. Evaluation is atomic and independent of rule order.</p><p>A calendar month uses its actual length, not a 30-day sliding window. No traffic is assumed before the simulation starts. Peak recurrence is determined by the calendar day on which the peak starts. Random traffic distributes an exact total uniformly over time; it is neither a forecast nor a Poisson arrival process.</p><p>In Apigee, longer-term consumption limits can be implemented using the <a href="https://docs.cloud.google.com/apigee/docs/api-platform/reference/policies/quota-policy" target="_blank" rel="noopener noreferrer">Quota policy</a>. This screen does not emulate sequential policy execution, distributed synchronization, Identifiers or Apigee StartTime details. The Spike Arrest workspace is a separate experiment and is not automatically chained with these quotas.</p></details></section>
 </section>
 
+<section id="advisorLab" hidden aria-labelledby="advisorTab">
+<div class="quota-intro"><div><h2>Turn observed traffic into candidate limits</h2><p>Import a flat Edge traffic CSV, remove traffic you do not want to size for, then measure and replay candidate calendar-window limits.</p></div><span class="offline">Local analysis only</span></div>
+<div class="advisor-note">Request logs and aggregated reports have different time resolution. Recommendations are only available for complete periods the CSV can actually measure. This is not an automatic Edge SpikeArrest policy generator.</div>
+<section class="panel"><div class="headrow"><div><span class="step">01 / IMPORT TRAFFIC</span><h2>CSV source</h2></div><button type="button" id="aClear">Clear imported data</button></div>
+<div class="advisor-upload"><div><label for="aFile">Choose an Edge traffic CSV</label><input id="aFile" type="file" accept=".csv,.tsv,text/csv,text/tab-separated-values"><div class="hint">UTF-8 CSV or TSV · Up to 15 MB and 100,000 rows. Files stay in this browser. Delimiter changes apply on the next import.</div></div><div><label for="aDelimiter">Delimiter</label><select id="aDelimiter"><option value="auto">Auto-detect</option><option value=",">Comma</option><option value=";">Semicolon</option><option value="tab">Tab</option></select></div></div>
+<details class="advisor-paste"><summary>Or paste CSV text</summary><label for="aPaste">Header row followed by traffic rows</label><textarea id="aPaste" rows="5" placeholder="timestamp,apiproxy,developer,request_path,response_status_code"></textarea><button type="button" id="aLoadPaste">Read pasted CSV</button></details>
+<div class="presets"><button type="button" id="aEventSample">Load request-log example</button><button type="button" id="aBucketSample">Load hourly-report example</button><button type="button" id="aDownloadEvents">Download request-log CSV</button><button type="button" id="aDownloadBuckets">Download aggregate CSV</button></div>
+<p id="aSource" class="hint">No CSV loaded. Start with an example if you want to explore the workflow.</p></section>
+<div id="aError" role="alert" hidden></div>
+<form id="advisorConfig" novalidate hidden>
+<section class="panel tablepanel"><div class="headrow"><div><span class="step">02 / MAP AND VALIDATE</span><h2>Tell us what each column means</h2></div><button type="button" id="aValidate">Validate mapping</button></div>
+<div class="advisor-options"><div><label for="aMode">Row meaning</label><select id="aMode"><option value="events">One request per row</option><option value="buckets">Aggregated request counts</option></select></div><div><label for="aBucket">Source bucket size</label><select id="aBucket"><option value="1000">1 second</option><option value="60000" selected>1 minute</option><option value="300000">5 minutes</option><option value="3600000">1 hour</option><option value="86400000">1 day</option></select></div><div><label for="aTimeFormat">Timestamp format</label><select id="aTimeFormat"><option value="auto">Auto · ISO / Unix</option><option value="iso">ISO date / time</option><option value="seconds">Unix seconds</option><option value="milliseconds">Unix milliseconds</option></select></div><div><label for="aZone">Time zone / calendar alignment</label><select id="aZone"><option value="0">UTC</option><option value="3">UTC+03:00</option><option value="1">UTC+01:00</option><option value="2">UTC+02:00</option><option value="-5">UTC−05:00</option><option value="-8">UTC−08:00</option></select></div></div>
+<div id="aMapping" class="advisor-options"></div>
+<label class="check-label"><input id="aStripQuery" type="checkbox" checked>Normalize paths: remove URL origins, query strings and fragments before filtering or grouping</label>
+<label class="check-label"><input id="aSkipInvalid" type="checkbox">Allow analysis to skip invalid rows listed below</label>
+<p class="hint">A timestamp is required. Counts are required for aggregated rows. Select the actual report bucket size; a count is never treated as simultaneous requests. Optional columns enable the corresponding exclusions and scopes.</p>
+<div id="aValidation" class="hint"></div><details id="aInvalidDetails" hidden><summary id="aInvalidSummary"></summary><ul id="aInvalidRows"></ul></details>
+<div class="tablewrap"><table><thead id="aPreviewHead"></thead><tbody id="aPreviewRows"></tbody></table></div>
+</section>
+<section class="panel tablepanel"><div class="headrow"><div><span class="step">03 / EXCLUDE TRAFFIC</span><h2>Keep the traffic you want to size for</h2></div><button type="button" id="aAddExclude">+ Exclusion</button></div>
+<div id="aExclusions"></div><label class="check-label"><input type="checkbox" id="aIgnoreCase">Ignore case in exclusion matching</label><p class="hint">Any matching rule excludes the row (OR). Exact, prefix, contains and * wildcard matching are supported. API, developer, path, app, status and environment can be excluded. Blank patterns are invalid; remove an unused rule.</p>
+<div class="advisor-options"><div><label for="aScope">Recommendation scope</label><select id="aScope"><option value="all">All included traffic · one shared limit</option><option value="api">Per API proxy</option><option value="developer">Per developer</option><option value="apiDeveloper">Per API + developer</option><option value="path">Per normalized path</option><option value="app">Per developer app</option></select></div><div><label for="aPercentile">Sizing baseline</label><select id="aPercentile"><option value="100">Observed peak · maximum complete bucket</option><option value="99">P99 of complete buckets</option><option value="95">P95 of complete buckets</option></select></div><div><label for="aHeadroom">Headroom (%)</label><input id="aHeadroom" type="number" min="0" max="500" step="any" value="20"></div></div>
+<div class="quota-options"><div><label for="aStart">Reporting start (inclusive)</label><input id="aStart" type="datetime-local" step="1"></div><div><label for="aEnd">Reporting end (exclusive)</label><input id="aEnd" type="datetime-local" step="1"></div></div>
+<p class="hint">Confirm the export covers this entire range. Initial dates use the first and last valid rows, rounded to seconds for request logs. Missing buckets are counted as zero; missing data is not detected automatically. Partial source buckets are excluded rather than prorated. At most 366 days.</p>
+<div class="quota-run"><span class="hint">Filters, mappings and reporting dates apply only when you analyze again.</span><button type="submit" class="primary">Analyze included traffic →</button></div>
+</section></form>
+<div id="aResults" hidden>
+<div class="quota-result-head"><h2>Traffic-based recommendations</h2><span id="aStale" hidden>Inputs changed · Analyze again</span></div>
+<div class="stats"><div class="panel stat"><small>After exclusions</small><strong id="aKeptCount">—</strong><small id="aKeptRows"></small></div><div class="panel stat"><small>Excluded traffic</small><strong id="aExcludedCount">—</strong><small id="aExcludedRows"></small></div><div class="panel stat"><small>Selected scope / reporting range</small><strong id="aAnalyzedCount">—</strong><small id="aOutside"></small></div></div>
+<section class="panel"><div class="headrow"><div><span class="step">04 / MEASURE AND REPLAY</span><h2>Candidate calendar limits</h2></div><div><label for="aGroup" style="margin-top:0">Traffic group</label><select id="aGroup"></select></div></div>
+<p id="aMethod" class="hint"></p><div class="tablewrap"><table><thead><tr><th>Period</th><th>Complete buckets</th><th>P95 / P99</th><th>Observed peak</th><th>Suggested limit</th><th>Standalone replay 429</th></tr></thead><tbody id="aRecommendations"></tbody></table></div>
+<div id="aCombined" class="insight"></div><div id="aQuality" class="advisor-note"></div><div class="scenario-actions"><button type="button" id="aExportJSON">Download analysis JSON</button><button type="button" id="aExportCSV">Download recommendations CSV</button></div>
+</section>
+<section class="panel tablepanel"><h2>Exclusion audit</h2><div class="tablewrap"><table><thead><tr><th>Rule</th><th>Matching rows</th><th>Matching requests</th></tr></thead><tbody id="aAudit"></tbody></table></div><p class="hint">Matching counts can overlap. The excluded total counts each row once. Existing HTTP errors and 429 responses remain included unless you explicitly exclude them.</p></section>
+</div>
+<section class="panel foot"><details><summary>Recommendation assumptions and Edge export compatibility</summary><p>This is descriptive sizing from supplied traffic, not a production guarantee. A suggested limit is ceil(selected complete-bucket percentile × (1 + headroom/100)), with a minimum of one. It has no awareness of backend capacity, business tiers or future growth.</p><p>Only complete calendar buckets determine percentiles. Missing buckets inside the declared reporting range count as zero. Percentiles are not request-weighted. No monthly recommendation is made without a complete calendar month, and coarse aggregates cannot justify finer limits. Aggregate counts are not expanded into invented timestamps.</p><p>Standalone replay counts rejections for each candidate separately. Combined replay applies all supported candidates atomically, counting accepted requests only. Both use shared calendar counters beginning empty at the reporting start; they are not Edge smoothing or distributed-runtime replays.</p><p>Use flat CSV with a header and one timestamp per request or per aggregate bucket. Do not combine subtotal rows with their underlying dimension rows. Column aliases include apiproxy, developer, developer_app, request_path and sum(message_count); actual Edge exports vary. See the <a href="https://docs.apigee.com/api-platform/analytics/analytics-reference" target="_blank" rel="noopener noreferrer">Edge analytics reference</a>. No API credentials or live Edge connection are used.</p><p>Imported CSV and analysis are held in memory. Download HTML intentionally omits this workspace’s imported data, filters and results. Download analysis JSON or recommendations CSV explicitly if you want to retain an analysis; these reports contain group names and exclusion values but not raw traffic rows.</p></details></section>
+</section>
+
 <section id="userGuide" hidden aria-labelledby="guideTab">
-<div class="guide-heading" id="guide"><div><span class="step">REFERENCE / USER GUIDE</span><h2>From your first request to a multi-quota traffic plan</h2><p>A complete guide to inputs, algorithms, peak schedules, random seeds, exports and interpreting results. Everything on this page is included in the offline HTML.</p></div><button type="button" id="printGuide">Print guide</button></div>
+<div class="guide-heading" id="guide"><div><span class="step">REFERENCE / USER GUIDE</span><h2>From your first request to a multi-quota traffic plan</h2><p>A complete guide to inputs, algorithms, peak schedules, random seeds, CSV recommendations, exports and interpreting results. Everything on this page is included in the offline HTML.</p></div><button type="button" id="printGuide">Print guide</button></div>
 <div class="guide-tools"><label for="guideSearch">Find a topic</label><input id="guideSearch" type="search" placeholder="Search: monthly reset, peak, seed, CSV…"><button type="button" id="clearGuide">Clear search</button><span id="guideMatches" role="status" aria-live="polite"></span></div>
 <div class="guide-layout"><aside class="guide-toc"><b>IN THIS GUIDE</b><nav id="guideTOC" aria-label="User guide chapters"></nav></aside><div class="guide-content">
 <article class="guide-chapter" id="guide-overview"><h2>1. Choose the right workspace</h2>
 <p>API Rate Limit Lab generates synthetic request timestamps, evaluates them against a model and explains which requests pass or fail. It runs entirely in your browser. No requests are sent to your API, no account is needed, and no simulation data is uploaded.</p>
 <div class="tablewrap"><table><thead><tr><th>Workspace</th><th>Use it to answer</th><th>Time scale</th></tr></thead><tbody><tr><td>Spike Arrest / Algorithms</td><td>What happens at a 50 ms interval? How do MPs and UseEffectiveCount change decisions? Which algorithm allows a burst?</td><td>Relative timestamps in milliseconds.</td></tr><tr><td>Quotas / Peak traffic</td><td>Can an API sustain daily demand under minute, hour, day and month limits? Which peak triggers the bottleneck?</td><td>Calendar dates, clock times and fixed time zone offsets.</td></tr></tbody></table></div>
-<p>These are independent experiments. The quota planner does not automatically run the Spike Arrest policy first, and its rules do not affect the algorithm comparison. A result marked <b>200</b> means the selected checks allow the request; it does not predict a successful backend response. <b>429</b> means a simulated limit violation.</p>
+<p>These are independent experiments. The CSV advisor is a third workspace for observed traffic; see chapters 17–20. The quota planner does not automatically run the Spike Arrest policy first, and its rules do not affect the algorithm comparison. A result marked <b>200</b> means the selected checks allow the request; it does not predict a successful backend response. <b>429</b> means a simulated limit violation.</p>
 <p>Start with a small, predictable scenario. Once the behavior makes sense, add randomness and additional limits. If you want to isolate the effect of one configuration change, use a fixed seed and change one control at a time.</p></article>
 
 <article class="guide-chapter" id="guide-quick-start"><h2>2. Quick start: two guided workflows</h2>
@@ -198,7 +238,7 @@ Total traffic = baseline count + sum of all included peak counts</pre>
 <h3>G. Separate randomness from capacity changes</h3><p>Run the busy-week plan in Random mode. Switch to Fixed without changing the seed, then run again: the same traffic is evaluated. Raise only the monthly limit and run once more. The timestamps remain unchanged, so differences in rejection counts are caused by the limit change rather than a new random sample.</p></article>
 
 <article class="guide-chapter" id="guide-saving"><h2>13. Save, export and work offline</h2>
-<h3>Download the complete HTML</h3><p>The header’s <b>Download HTML</b> button creates one standalone file with both workspaces, this entire guide and your current settings. Seeds are saved as Fixed for replay. The downloaded copy omits the HTML download button, but keeps scenario/plan saving, CSV export, guide search and printing. Open the file directly in a modern browser; no installation or server is required.</p>
+<h3>Download the complete HTML</h3><p>The header’s <b>Download HTML</b> button creates one standalone file with all workspaces, this entire guide and your current simulation settings. Imported advisor traffic and results are intentionally omitted. Seeds are saved as Fixed for replay. The downloaded copy omits the HTML download button, but keeps scenario/plan saving, CSV export, guide search and printing. Open the file directly in a modern browser; no installation or server is required.</p>
 <p>Both workspaces must contain valid settings before the HTML snapshot can be created. A downloaded file captures the settings, not a permanent database of runs. Calculations are reconstructed when its workspace opens. Save again from the hosted page if you need a new HTML snapshot.</p>
 <h3>Scenario and plan JSON files</h3><p><b>Save scenario / Open scenario</b> belong to Spike Arrest and use version 2 JSON. <b>Save plan / Open plan</b> belong to Quotas and use version 3 JSON with <code>kind: "quota"</code>. These file types are not interchangeable. Existing v2/v3 files remain compatible; the optional seedMode field defaults to Fixed when absent. Imports validate the whole configuration before replacing your settings. Maximum file size is 300,000 bytes.</p>
 <pre>{
@@ -251,6 +291,42 @@ Total traffic = baseline count + sum of all included peak counts</pre>
 <p>The generated SpikeArrest XML represents the rate and UseEffectiveCount settings only. Traffic generation, routing, seeds and generic algorithm comparisons are simulator inputs, not XML policy attributes. The quota planner does not generate a complete Apigee deployment configuration.</p>
 <ul><li><a href="https://docs.apigee.com/api-platform/reference/policies/spike-arrest-policy" target="_blank" rel="noopener noreferrer">Apigee Edge SpikeArrest reference</a></li><li><a href="https://docs.cloud.google.com/apigee/docs/api-platform/reference/policies/spike-arrest-policy" target="_blank" rel="noopener noreferrer">Apigee X / hybrid SpikeArrest reference</a></li><li><a href="https://docs.cloud.google.com/apigee/docs/api-platform/reference/policies/quota-policy" target="_blank" rel="noopener noreferrer">Apigee Quota policy reference</a></li><li><a href="https://redis.io/tutorials/howtos/ratelimiting/" target="_blank" rel="noopener noreferrer">General rate limiting algorithms</a></li></ul>
 <p>External references need internet access when opened. The guide, calculations, search, local imports and exports work offline.</p></article>
+<article class="guide-chapter" id="guide-csv-import"><h2>17. Import Edge traffic into the CSV advisor</h2>
+<p>Open <b>CSV / Limit advisor</b> to size candidate limits from observed traffic rather than synthetic demand. Load a UTF-8 CSV/TSV or paste its text. Example request logs and hourly reports can be loaded or downloaded directly from this workspace. No Edge credentials are needed and the file is never uploaded.</p>
+<p>The input must be a flat table with a header row and timestamped data rows. Comma, semicolon and tab delimiters, quoted delimiters, escaped quotes, CRLF and multiline quoted fields are supported. Delimiter changes take effect on the next import. Reports with pivoted time columns, multiple header rows, subtotal blocks or nested JSON must first be converted to a flat table.</p>
+<div class="tablewrap"><table><thead><tr><th>Mapping</th><th>Common automatically recognized names</th><th>Purpose</th></tr></thead><tbody><tr><td>Timestamp</td><td>timestamp, client_received_start_timestamp, start_timestamp, hour, minute, date</td><td>Required request time or aggregate bucket start.</td></tr><tr><td>Request count</td><td>sum(message_count), sum_message_count, message_count, count</td><td>Required for aggregate rows; ignored for one-request-per-row mode.</td></tr><tr><td>API / Developer / App</td><td>apiproxy, developer, developer_email, developer_app</td><td>Optional exclusion and grouping dimensions.</td></tr><tr><td>Path / Status / Environment</td><td>request_path, request_uri, response_status_code, environment</td><td>Optional exclusion dimensions; path also supports grouping.</td></tr></tbody></table></div>
+<p>Automatic mapping is a starting point, not proof that a report is understood. Check the six-row preview and every mapped field. If a count column is recognized, aggregated mode is initially selected. Confirm whether each row is one request or a count covering a fixed interval. For aggregates, select the actual source bucket size: 1 second, 1 minute, 5 minutes, 1 hour or 1 day. Counts are never expanded into invented simultaneous requests.</p>
+<pre>timestamp,apiproxy,developer,request_path,response_status_code
+2026-09-01T00:00:00Z,orders-api,partner@example.test,/orders,200
+2026-09-01T00:00:01Z,health-api,internal@example.test,/health,200</pre>
+<p>Timestamps can be Unix seconds, Unix milliseconds or ISO dates, including explicit offsets and a UTC suffix. A date without a time means midnight. A timestamp without a zone uses the selected fixed UTC offset. Ambiguous dates such as 09/01/2026 are rejected. Aggregate bucket starts must align with the selected bucket size and calendar time zone.</p>
+<p>Press <b>Validate mapping</b>. Malformed rows, invalid timestamps, noninteger counts and field-count mismatches are listed with line numbers. Analysis stops by default if any rows are invalid. Fix the source, or explicitly enable skipping those rows; the omission remains recorded in the analysis. Missing timestamp columns cannot be repaired by assuming an average reporting rate.</p></article>
+
+<article class="guide-chapter" id="guide-csv-exclusions"><h2>18. Exclude APIs, developers, paths and other traffic</h2>
+<p>Add an exclusion for an API proxy, developer, request path, developer app, HTTP status or environment. The corresponding CSV column must be mapped. Up to 20 rules are supported. Rules are combined with <b>OR</b>: a row matching any one rule is excluded.</p>
+<ul><li><b>Exact:</b> exclude developer <code>internal@example.test</code> or API <code>health-api</code>.</li><li><b>Starts with:</b> exclude every path beginning with <code>/internal/</code>.</li><li><b>Contains:</b> exclude paths containing <code>/metrics</code> anywhere in the string.</li><li><b>Wildcard *:</b> exclude <code>/v1/*/health</code> or HTTP status <code>5*</code>. Only * is special; other characters are literal, not regular expressions.</li></ul>
+<p>Matching is case-sensitive unless Ignore case is enabled. Empty patterns are invalid. With path normalization enabled, HTTP(S) URL origins, query strings and fragments are removed before both matching and grouping. For example, <code>https://api.example.test/health?probe=1</code> becomes <code>/health</code>. Path IDs are not templated automatically: <code>/orders/1</code> and <code>/orders/2</code> remain different paths.</p>
+<p>The exclusion audit reports rows and request counts matched by each rule. Overlaps appear in every matching rule’s audit count, but the excluded total counts each row only once. These audit counts cover valid CSV rows before the reporting-range filter. Existing 429s and other errors are included unless you exclude them explicitly. Removing them may hide actual demand; decide which traffic population your policy should protect.</p>
+<h3>Choose the enforcement scope you intend to use</h3><p>All included traffic proposes one shared allowance. Per API, developer, app or path proposes a limit for the selected group. Per API + developer uses a separate pair as the group key. The Traffic group selector shows up to the 200 busiest groups after exclusions, ranked by traffic before the date filter. Refine exclusions to reach another group.</p>
+<p>A developer-specific recommendation should not be deployed as a global limit without reconsidering its scope. The advisor does not create Identifiers or automatically push policies into Edge.</p></article>
+
+<article class="guide-chapter" id="guide-csv-sizing"><h2>19. Understand candidate limits and observed replay</h2>
+<p>Confirm the reporting start and end before analysis. The initial range is based on valid CSV timestamps; request logs round outward to second boundaries, and aggregate rows extend through their bucket end. The range is an assertion of complete export coverage, not evidence that no data is missing. Adjust it to the actual export interval.</p>
+<p>For each supported calendar period, traffic is summed into second, minute, hour, day and month buckets. Only buckets fully contained in the reporting interval determine sizing. Missing buckets inside that range count as zero. A monthly recommendation needs a complete calendar month; hourly input cannot produce a second or minute recommendation. Partially included source aggregate rows are excluded entirely, without proration.</p>
+<pre>Suggested limit = max(1, ceil(sizing baseline × (1 + headroom / 100)))
+Sizing baseline = observed peak, P99 or P95 of complete calendar buckets</pre>
+<p>Percentiles use nearest rank over all complete buckets, including zeros, and are not weighted by request count. P99 therefore does <b>not</b> mean “reject only 1% of requests”. A few large bursts can carry most of the traffic. In a sparse sample, P95/P99 can be zero and the candidate becomes one. The default is the observed peak plus 20% headroom.</p>
+<p>For example, complete second buckets with counts 10 and 5 have a peak of 10. With 20% headroom, the candidate is 12 requests/second. A source containing only two seconds cannot justify a minute, hourly or monthly candidate. If the report declares a full minute but only one second contains 10 requests, missing seconds count as zero; P95 is zero and a zero-headroom percentile candidate would be one.</p>
+<p><b>Standalone replay</b> evaluates each proposed calendar limit independently on the observed traffic. <b>Combined replay</b> evaluates all supported candidates together with atomic accepted-only counters. The latter is not the sum of standalone rejections. Replay starts with empty counters at the reporting start and includes observed traffic in partial calendar periods, even though those periods do not determine percentiles.</p>
+<p>These are shared calendar-window count recommendations, not verified Edge smoothing rates. A per-second calendar allowance can accept short bursts that an Edge minimum-gap model rejects. No rate is extrapolated from coarse data, no future-demand forecast is made, and no recommendation considers backend capacity or business requirements.</p></article>
+
+<article class="guide-chapter" id="guide-csv-export"><h2>20. Export, clear and assess traffic analyses</h2>
+<p><b>Download analysis JSON</b> records the selected group, mapping, exclusions, reporting range, percentile/headroom settings, invalid-row count, recommendations and combined replay counts. <b>Download recommendations CSV</b> records the candidate table, including unsupported periods and their reasons. Both export the last analyzed snapshot and selected group; if settings are marked stale, analyze again first.</p>
+<p>Reports contain group names and exclusion values but no raw traffic rows. Imported data remains only in memory. <b>Clear imported data</b> removes it from the advisor. <b>Download HTML</b> deliberately restores an empty advisor in the saved copy, omitting imported CSV, filters, previews and results. The other workspaces’ settings and the complete guide remain included. Use an explicit analysis export if you want to retain the advisor result.</p>
+<p>CSV limits are 15 MB, 100,000 data rows, 100 unique non-empty headers and a maximum declared reporting span of 366 days. Aggregate totals can be up to one trillion requests without expanding them into rows. Full logs are not deduplicated automatically: identical request timestamps can represent legitimate simultaneous requests. Do not mix subtotals with their underlying rows or overlapping exports of the same population.</p>
+<p>Before acting on a candidate, check that your sample covers representative busy and quiet periods, includes the intended clients and endpoints, and is not already censored by upstream limits or missing exports. A small number of complete periods makes tail percentiles weakly supported. Increasing the date range without supplying its missing traffic creates zero buckets and can materially lower percentile recommendations.</p>
+<p>For actual Edge runtime validation, keep the proposed scope and policy semantics explicit. The advisor provides evidence from a CSV, not a deployment action or a guarantee about future 429s. See the <a href="https://docs.apigee.com/api-platform/analytics/analytics-reference" target="_blank" rel="noopener noreferrer">Edge analytics metrics and dimensions reference</a> for export fields.</p></article>
+
 <p id="guideEmpty" hidden>No chapters match your search. Try a shorter term such as “seed”, “month” or “CSV”.</p>
 </div></div></section>
 
@@ -402,6 +478,108 @@ function qTime(t,timezone,seconds=true){if(t===null||t===undefined)return '—';
 function qRuleLabel(r){return `${fmt(r.limit)} / ${QUNIT[r.unit]}`;}
 function qCSV(rows,q){const cell=v=>'"'+String(v).replaceAll('"','""')+'"';return '\ufeff'+['request,time_local,utc_offset,source,status,violated_limits,next_available_local',...rows.map(r=>[r.id,cell(qTime(r.t,q.timezone)),q.timezone,cell(r.source?'Peak '+r.source:'Baseline'),r.status,cell(r.violations.map(i=>qRuleLabel(q.rules[i])).join(' | ')),cell(qTime(r.next,q.timezone))].join(','))].join('\r\n');}
 
+const AALIASES={time:['timestamp','client_received_start_timestamp','start_timestamp','bucket_start','time','datetime','date','hour','minute'],count:['sum(message_count)','sum_message_count','message_count','count','requests','traffic'],api:['apiproxy','api_proxy','api','proxy'],developer:['developer','developer_email','developer_id','developeremail'],path:['request_path','request_uri','path','uri','proxy_basepath'],app:['developer_app','app','app_name'],status:['response_status_code','status_code','status','http_status_code'],environment:['environment','env']};
+const AUNITS=[['second',1000],['minute',60000],['hour',3600000],['day',86400000],['month',null]];
+function aDelimiter(text){const first=text.replace(/^\uFEFF/,'').split(/\r?\n/)[0];let quoted=false;const counts={',':0,';':0,'\t':0};for(let i=0;i<first.length;i++){if(first[i]==='"'){if(quoted&&first[i+1]==='"')i++;else quoted=!quoted;}else if(!quoted&&Object.hasOwn(counts,first[i]))counts[first[i]]++;}return Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0];}
+function aParseCSV(text,delimiter='auto'){
+ if(typeof text!=='string'||text.length>15000000)throw Error('CSV text must be 15 MB or smaller.');
+ text=text.replace(/^\uFEFF/,'');const sep=delimiter==='auto'?aDelimiter(text):delimiter;if(![',',';','\t'].includes(sep))throw Error('Choose comma, semicolon or tab as the delimiter.');
+ const records=[];let row=[],cell='',quoted=false,closed=false,line=1,rowLine=1;
+ function finishCell(){row.push(cell);cell='';closed=false;}
+ function finishRow(){finishCell();if(row.some(v=>v.trim()!=='')){records.push({cells:row,line:rowLine});if(records.length>100001)throw Error('CSV contains more than 100,000 data rows.');}row=[];}
+ for(let i=0;i<text.length;i++){
+  const c=text[i];if(quoted){if(c==='"'){if(text[i+1]==='"'){cell+='"';i++;}else{quoted=false;closed=true;}}else{cell+=c;if(c==='\n')line++;}continue;}
+  if(c==='"'){if(cell.length||closed)throw Error(`Unexpected quote at CSV line ${line}.`);quoted=true;continue;}
+  if(c===sep){finishCell();continue;}
+  if(c==='\r'||c==='\n'){finishRow();if(c==='\r'&&text[i+1]==='\n')i++;line++;rowLine=line;continue;}
+  if(closed){if(c===' '||c==='\t')continue;throw Error(`Unexpected text after a closing quote at CSV line ${line}.`);}
+  cell+=c;if(cell.length>100000)throw Error(`CSV field at line ${line} exceeds 100,000 characters.`);
+ }
+ if(quoted)throw Error('CSV has an unclosed quoted field.');if(cell.length||row.length||closed)finishRow();
+ if(records.length<2)throw Error('CSV needs a header row and at least one data row.');
+ const headers=records.shift().cells.map(s=>s.trim());if(headers.some(h=>!h)||headers.length>100||new Set(headers.map(h=>h.toLowerCase())).size!==headers.length)throw Error('Use 1–100 unique, non-empty column headers.');
+ return {headers,rows:records,delimiter:sep};
+}
+function aAutoMap(headers){return Object.fromEntries(Object.entries(AALIASES).map(([key,names])=>[key,headers.findIndex(h=>names.includes(h.trim().toLowerCase()))]));}
+function aTimestamp(raw,format='auto',offset=0){
+ const s=String(raw).trim();if(!s)throw Error('Missing timestamp.');
+ if(format==='seconds'||format==='milliseconds'||format==='auto'&&/^\d+(?:\.\d+)?$/.test(s)){
+  if(!/^\d+(?:\.\d+)?$/.test(s))throw Error('Expected a Unix timestamp.');
+  const n=Number(s),t=format==='milliseconds'?n:format==='seconds'?n*1000:n<1e11?n*1000:n;
+  if(!Number.isFinite(t)||t<0||t>=Date.UTC(2100,0,1))throw Error('Unix timestamp must be between 1970 and 2099; select seconds or milliseconds explicitly if needed.');return Math.floor(t);
+ }
+ const m=s.replace(/\s+UTC$/i,'Z').match(/^(\d{4})-(\d\d)-(\d\d)(?:[T ](\d\d):(\d\d)(?::(\d\d)(?:\.(\d{1,3}))?)?)?(Z|[+-]\d\d:?\d\d)?$/i);
+ if(!m)throw Error('Use ISO dates (YYYY-MM-DD HH:MM:SS), ISO offsets, or Unix timestamps.');
+ const [y,mo,d,h,mi,se]=[m[1],m[2],m[3],m[4]||0,m[5]||0,m[6]||0].map(Number),ms=Number((m[7]||'').padEnd(3,'0')),local=Date.UTC(y,mo-1,d,h,mi,se,ms),date=new Date(local);
+ if(y<1970||y>2099||date.getUTCFullYear()!==y||date.getUTCMonth()!==mo-1||date.getUTCDate()!==d||h>23||mi>59||se>59)throw Error('Invalid calendar timestamp.');
+ let zone=Number(offset)*3600000;if(m[8]){if(m[8].toUpperCase()==='Z')zone=0;else{const z=m[8].replace(':',''),zh=Number(z.slice(1,3)),zm=Number(z.slice(3,5));if(zh>14||zm>59||zh===14&&zm!==0)throw Error('Invalid UTC offset.');zone=(zh*60+zm)*60000*(z[0]==='-'?-1:1);}}
+ // offset argument is hours; explicit timestamp offsets always take precedence.
+ if(!m[8])zone=Number(offset)*3600000;return local-zone;
+}
+function aNormalize(parsed,options){
+ const {map,mode,bucketMs,format,timezone,stripQuery}=options;
+ if(!['events','buckets'].includes(mode))throw Error('Choose request rows or aggregate buckets.');
+ if(map.time<0||map.time>=parsed.headers.length)throw Error('Map the timestamp column before analysis.');
+ if(mode==='buckets'&&(map.count<0||map.count>=parsed.headers.length))throw Error('Map a request-count column for aggregate buckets.');
+ if(mode==='buckets'&&![1000,60000,300000,3600000,86400000].includes(bucketMs))throw Error('Select the source bucket size.');
+ const normalized=[],invalid=[];let total=0;
+ for(const record of parsed.rows){try{
+  if(record.cells.length!==parsed.headers.length)throw Error(`Expected ${parsed.headers.length} fields; found ${record.cells.length}.`);
+  const t=aTimestamp(record.cells[map.time],format,timezone);let count=1;
+  if(mode==='buckets'){const value=record.cells[map.count].trim();if(!/^\d+(?:\.0+)?$/.test(value))throw Error('Request count must be a nonnegative integer without thousands separators.');count=Number(value);if(!Number.isSafeInteger(count)||count>1e12)throw Error('Request count is too large.');if((t+timezone*3600000)%bucketMs!==0)throw Error('Aggregate bucket start is not aligned to the selected bucket size and time zone.');}
+  const r={t,count,line:record.line};for(const key of ['api','developer','path','app','status','environment']){r[key]=map[key]>=0?record.cells[map[key]].trim():'';if(r[key].length>4096)throw Error(`${key} value exceeds 4,096 characters.`);}
+  if(stripQuery&&r.path){r.path=r.path.split(/[?#]/)[0];if(/^https?:\/\//i.test(r.path))r.path=r.path.replace(/^https?:\/\/[^/]+/i,'')||'/';}
+  total+=count;if(total>1e12)throw Error('Total traffic exceeds 1 trillion requests.');normalized.push(r);
+ }catch(e){invalid.push({line:record.line,reason:e.message});}}
+ if(total>1e12)throw Error('Total traffic exceeds 1 trillion requests.');
+ return {rows:normalized.sort((a,b)=>a.t-b.t||a.line-b.line),invalid};
+}
+function aGlob(text,pattern){let i=0,j=0,star=-1,match=0;while(i<text.length){if(j<pattern.length&&pattern[j]===text[i]){i++;j++;}else if(pattern[j]==='*'){star=j++;match=i;}else if(star>=0){j=star+1;i=++match;}else return false;}while(pattern[j]==='*')j++;return j===pattern.length;}
+function aExclude(rows,rules,map,ignoreCase){
+ if(rules.length>20)throw Error('Use at most 20 exclusion rules.');
+ rules.forEach(r=>{if(!['api','developer','path','app','status','environment'].includes(r.field)||map[r.field]<0)throw Error(`Map the ${r.field} column before excluding it.`);if(!['exact','prefix','contains','glob'].includes(r.op)||!r.value||r.value.length>256)throw Error('Each exclusion needs a match type and a value of 1–256 characters.');});
+ const stats=rules.map(()=>({rows:0,requests:0})),kept=[];let excludedRows=0,excludedRequests=0;
+ for(const row of rows){let exclude=false;rules.forEach((rule,i)=>{const value=ignoreCase?row[rule.field].toLowerCase():row[rule.field],needle=ignoreCase?rule.value.toLowerCase():rule.value;const hit=rule.op==='exact'?value===needle:rule.op==='prefix'?value.startsWith(needle):rule.op==='contains'?value.includes(needle):aGlob(value,needle);if(hit){exclude=true;stats[i].rows++;stats[i].requests+=row.count;}});if(exclude){excludedRows++;excludedRequests+=row.count;}else kept.push(row);}
+ return {rows:kept,stats,excludedRows,excludedRequests};
+}
+function aGroups(rows,scope,map){
+ const fields=scope==='all'?[]:scope==='apiDeveloper'?['api','developer']:[scope];
+ if(fields.some(f=>!['api','developer','path','app'].includes(f)||map[f]<0))throw Error('Map every column used by the selected recommendation scope.');
+ const groups=new Map();for(const row of rows){const values=fields.map(f=>row[f]),key=JSON.stringify(values);if(!groups.has(key))groups.set(key,{key,label:fields.length?values.map(v=>v||'(empty)').join(' / '):'All included traffic',rows:[],total:0});const group=groups.get(key);group.rows.push(row);group.total+=row.count;}
+ return Array.from(groups.values()).sort((a,b)=>b.total-a.total||a.key.localeCompare(b.key));
+}
+function aQuantile(positiveCounts,buckets,p){if(!buckets)return null;const rank=Math.ceil(buckets*p/100),zero=buckets-positiveCounts.length;return rank<=zero?0:positiveCounts[rank-zero-1];}
+function aFullRange(start,end,unit,timezone){
+ let first=qBounds(start,unit,timezone);if(first.start<start)first=qBounds(first.end,unit,timezone);
+ if(unit!=='month'){const period=QPERIOD[unit];return {first:first.start,buckets:Math.max(0,Math.floor((end-first.start)/period))};}
+ let t=first.start,n=0;while(qBounds(t,unit,timezone).end<=end){n++;t=qBounds(t,unit,timezone).end;}return {first:first.start,buckets:n};
+}
+function aAnalyze(rows,options){
+ const {start,end,timezone,mode,bucketMs,percentile,headroom}=options;
+ if(!Number.isFinite(start)||!Number.isFinite(end)||end<=start||end-start>366*QDAY)throw Error('Reporting range must be positive and at most 366 days.');
+ if(![95,99,100].includes(percentile)||!Number.isFinite(headroom)||headroom<0||headroom>500)throw Error('Select P95, P99 or observed peak, with 0–500% headroom.');
+ const included=[],outside=[];for(const r of rows){const stop=r.t+(mode==='buckets'?bucketMs:0);if(r.t>=start&&r.t<end&&stop<=end)included.push(r);else outside.push(r);}
+ const total=included.reduce((n,r)=>n+r.count,0),outsideRequests=outside.reduce((n,r)=>n+r.count,0);
+ const results=AUNITS.map(([unit,period])=>{
+  if(mode==='buckets'&&period&&period<bucketMs)return {unit,supported:false,reason:'Source buckets are coarser than this period.'};
+  const counts=new Map();for(const r of included){const bounds=qBounds(r.t,unit,timezone);if(mode==='buckets'&&r.t+bucketMs>bounds.end)return {unit,supported:false,reason:'A source bucket crosses this calendar boundary.'};counts.set(bounds.start,(counts.get(bounds.start)||0)+r.count);}
+  const full=aFullRange(start,end,unit,timezone),fullCounts=Array.from(counts.entries()).filter(([t])=>t>=full.first&&qBounds(t,unit,timezone).end<=end).map(([,n])=>n).filter(n=>n>0).sort((a,b)=>a-b);
+  if(!full.buckets)return {unit,supported:false,reason:'No complete calendar period in the reporting range.'};
+  const peak=fullCounts.at(-1)||0,p95=aQuantile(fullCounts,full.buckets,95),p99=aQuantile(fullCounts,full.buckets,99),baseline=percentile===100?peak:percentile===99?p99:p95;
+  if(!peak)return {unit,supported:false,reason:'No positive demand in complete periods.',buckets:full.buckets};
+  const recommended=Math.max(1,Math.ceil(baseline*(1+headroom/100))),rejected=Array.from(counts.values()).reduce((n,count)=>n+Math.max(0,count-recommended),0);
+  return {unit,supported:true,buckets:full.buckets,activeBuckets:fullCounts.length,p95,p99,peak,recommended,rejected,rejectionPct:total?rejected/total*100:0,partialBuckets:Array.from(counts.keys()).filter(t=>t<full.first||qBounds(t,unit,timezone).end>end).length};
+ });
+ return {total,outsideRequests,rows:included,results};
+}
+function aReplay(rows,rules,timezone){
+ const states=rules.map(r=>({...r,end:-Infinity,count:0}));let accepted=0;
+ for(const row of rows){let allowance=row.count;for(const s of states){if(row.t>=s.end){s.end=qBounds(row.t,s.unit,timezone).end;s.count=0;}allowance=Math.min(allowance,Math.max(0,s.recommended-s.count));}
+  accepted+=allowance;for(const s of states)s.count+=allowance;
+ }
+ return {accepted,rejected:rows.reduce((n,r)=>n+r.count,0)-accepted};
+}
+
 // UI only below this marker; the simulation above has no DOM or network dependency.
 const $=id=>document.getElementById(id);
 let current=null,currentConfig=null,noticeTimer;
@@ -473,6 +651,7 @@ function offlineHTML(){
  for(const id of ['seedMode','qSeedMode'])Array.from(clone.querySelector('#'+id).options).forEach(o=>o.toggleAttribute('selected',o.value==='fixed'));
  clone.querySelector('#quotaInitial').textContent=JSON.stringify({...qRead(),seedMode:'fixed'}).replaceAll('<','\\u003c');
  clone.querySelector('#notice').textContent='';
+ clone.querySelector('#advisorLab').replaceWith(advisorPristine.cloneNode(true));
  return '<!doctype html>\n'+clone.outerHTML;
 }
 $('newSeed').addEventListener('click',()=>{$('seed').value=randomSeed($('seed').value);update({keepSeed:true});});
@@ -541,7 +720,7 @@ function qRunSimulation(options={}){
  }catch(e){$('qError').textContent=e.message;$('qError').hidden=false;if(qLast)$('qStale').hidden=false;}
 }
 function selectWorkspace(name){
- for(const [key,panel,tab] of [['spike','spikeLab','spikeTab'],['quota','quotaLab','quotaTab'],['guide','userGuide','guideTab']]){const active=name===key;$(panel).hidden=!active;$(tab).classList.toggle('active',active);$(tab).setAttribute('aria-pressed',String(active));}
+ for(const [key,panel,tab] of [['spike','spikeLab','spikeTab'],['quota','quotaLab','quotaTab'],['advisor','advisorLab','advisorTab'],['guide','userGuide','guideTab']]){const active=name===key;$(panel).hidden=!active;$(tab).classList.toggle('active',active);$(tab).setAttribute('aria-pressed',String(active));}
  if(name==='quota'&&!qLast)qRunSimulation();
 }
 function selectLab(quota){selectWorkspace(quota?'quota':'spike');}
@@ -582,5 +761,96 @@ document.querySelectorAll('[data-guide-example]').forEach(button=>button.addEven
 function openGuideHash(){const id=location.hash.slice(1);if(id==='guide'||id.startsWith('guide-')&&$(id)?.classList.contains('guide-chapter')){selectWorkspace('guide');$('guideSearch').value='';filterGuide();$(id)?.scrollIntoView?.();}}
 window.addEventListener('hashchange',openGuideHash);
 filterGuide();openGuideHash();
+
+const advisorPristine=$('advisorLab').cloneNode(true);
+const AFIELDLABEL={time:'Timestamp',count:'Request count',api:'API proxy',developer:'Developer',path:'Request path',app:'Developer app',status:'HTTP status',environment:'Environment'};
+let aParsed=null,aLast=null,aRendered=null,aSourceName='';
+function aError(message){$('aError').textContent=message;$('aError').hidden=!message;}
+function aDirty(){if(aLast)$('aStale').hidden=false;}
+function aOptions(){
+ const map=Object.fromEntries(Object.keys(AALIASES).map(key=>[key,Number($('aMap-'+key).value)]));
+ const mode=$('aMode').value,bucketMs=Number($('aBucket').value),timezone=Number($('aZone').value),format=$('aTimeFormat').value;
+ if(!['auto','iso','seconds','milliseconds'].includes(format)||![0,3,1,2,-5,-8].includes(timezone))throw Error('Invalid timestamp format or time zone.');
+ return {map,mode,bucketMs,timezone,format,stripQuery:$('aStripQuery').checked};
+}
+function aRefreshMode(){$('aBucket').disabled=$('aMode').value!=='buckets';if($('aMap-count'))$('aMap-count').disabled=$('aMode').value!=='buckets';}
+function aInputDate(t,offset){return new Date(t+offset*3600000).toISOString().slice(0,19);}
+function aPrepare(){
+ if(!aParsed)throw Error('Load a CSV first.');const options=aOptions(),normalized=aNormalize(aParsed,options);
+ $('aValidation').textContent=`${fmt(normalized.rows.length)} valid rows; ${fmt(normalized.invalid.length)} invalid rows. ${options.mode==='events'?'Each valid row is one request.':'Counts remain aggregated; no request timestamps are invented.'}`;
+ $('aInvalidDetails').hidden=normalized.invalid.length===0;$('aInvalidSummary').textContent=`Inspect ${fmt(normalized.invalid.length)} invalid rows`;
+ $('aInvalidRows').innerHTML=normalized.invalid.slice(0,20).map(r=>`<li>Line ${r.line}: ${escapeHTML(r.reason)}</li>`).join('');
+ if(normalized.invalid.length>20)$('aInvalidRows').insertAdjacentHTML('beforeend','<li>Only the first 20 errors are shown.</li>');
+ if(normalized.rows.length){const min=normalized.rows[0].t,max=normalized.rows.at(-1).t;if(!$('aStart').value)$('aStart').value=aInputDate(Math.floor(min/1000)*1000,options.timezone);if(!$('aEnd').value)$('aEnd').value=aInputDate(options.mode==='buckets'?max+options.bucketMs:Math.floor(max/1000)*1000+1000,options.timezone);}
+ return {options,...normalized};
+}
+function aLoadText(text,name,bucketHint=null){
+ try{
+  const parsed=aParseCSV(text,$('aDelimiter').value==='tab'?'\t':$('aDelimiter').value);aParsed=parsed;aSourceName=name;aLast=null;aRendered=null;$('aResults').hidden=true;$('advisorConfig').hidden=false;aError('');
+  const map=aAutoMap(parsed.headers);$('aMapping').innerHTML=Object.entries(AFIELDLABEL).map(([key,label])=>`<div><label for="aMap-${key}">${label}${key==='time'?' · required':''}</label><select id="aMap-${key}"><option value="-1">Not mapped</option>${parsed.headers.map((h,i)=>`<option value="${i}" ${i===map[key]?'selected':''}>${escapeHTML(h)}</option>`).join('')}</select></div>`).join('');
+  $('aMode').value=map.count>=0?'buckets':'events';const timeHeader=(parsed.headers[map.time]||'').toLowerCase();$('aBucket').value=String(bucketHint||(timeHeader==='hour'?3600000:timeHeader==='date'?86400000:60000));
+  $('aStart').value='';$('aEnd').value='';$('aExclusions').innerHTML='';$('aSkipInvalid').checked=false;aRefreshMode();
+  $('aSource').textContent=`${name} · ${fmt(parsed.rows.length)} data rows · ${parsed.headers.length} columns · ${parsed.delimiter==='\t'?'tab':parsed.delimiter===';'?'semicolon':'comma'} separated`;
+  $('aPreviewHead').innerHTML='<tr>'+parsed.headers.map(h=>`<th>${escapeHTML(h)}</th>`).join('')+'</tr>';
+  $('aPreviewRows').innerHTML=parsed.rows.slice(0,6).map(r=>'<tr>'+r.cells.map(c=>`<td>${escapeHTML(c.slice(0,200))}${c.length>200?'…':''}</td>`).join('')+'</tr>').join('');
+  aPrepare();
+ }catch(e){aError(e.message);aDirty();}
+}
+function aExclusionMarkup(){return `<div class="advisor-exclude"><select data-a-field aria-label="Exclusion field">${['api','developer','path','app','status','environment'].map(key=>`<option value="${key}">${AFIELDLABEL[key]}</option>`).join('')}</select><select data-a-op aria-label="Match type"><option value="exact">Exact</option><option value="prefix">Starts with</option><option value="contains">Contains</option><option value="glob">Wildcard *</option></select><input data-a-value type="text" maxlength="256" placeholder="e.g. health-api or /health*" aria-label="Value to exclude"><button type="button" class="remove-row" data-a-remove aria-label="Remove exclusion">×</button></div>`;}
+function aReadExclusions(){return Array.from($('aExclusions').children,row=>({field:row.querySelector('[data-a-field]').value,op:row.querySelector('[data-a-op]').value,value:row.querySelector('[data-a-value]').value}));}
+function aRun(){
+ try{
+  const source=aPrepare();if(source.invalid.length&&!$('aSkipInvalid').checked)throw Error('Fix invalid rows, or explicitly allow skipping the listed rows before analysis.');
+  if(!source.rows.length)throw Error('There are no valid timestamped rows to analyze.');
+  const filters=aReadExclusions(),filtered=aExclude(source.rows,filters,source.options.map,$('aIgnoreCase').checked),scope=$('aScope').value,allGroups=aGroups(filtered.rows,scope,source.options.map),groups=allGroups.slice(0,200);
+  const config={...source.options,start:aTimestamp($('aStart').value,'iso',source.options.timezone),end:aTimestamp($('aEnd').value,'iso',source.options.timezone),percentile:Number($('aPercentile').value),headroom:$('aHeadroom').value.trim()===''?NaN:Number($('aHeadroom').value)};
+  aAnalyze([],config); // Validate range and sizing inputs before replacing an existing analysis.
+  const selected=$('aGroup').value;if(!groups.length)groups.push({key:'[]',label:'No included traffic',total:0,rows:[]});
+  aLast={source,filtered,filters,scope,groups,groupCount:allGroups.length,config,sourceName:aSourceName,headers:aParsed.headers.slice(),ignoreCase:$('aIgnoreCase').checked};
+  $('aGroup').innerHTML=groups.map(g=>`<option value="${escapeHTML(g.key)}">${escapeHTML(g.label)} · ${fmt(g.total)} requests</option>`).join('');
+  if(groups.some(g=>g.key===selected))$('aGroup').value=selected;
+  $('aKeptCount').textContent=fmt(filtered.rows.reduce((n,r)=>n+r.count,0));$('aKeptRows').textContent=`${fmt(filtered.rows.length)} valid CSV rows before the date filter`;$('aExcludedCount').textContent=fmt(filtered.excludedRequests);$('aExcludedRows').textContent=`${fmt(filtered.excludedRows)} rows excluded once each`;
+  $('aAudit').innerHTML=filters.map((r,i)=>`<tr><td>${escapeHTML(AFIELDLABEL[r.field]+' '+r.op+' '+r.value)}</td><td>${fmt(filtered.stats[i].rows)}</td><td>${fmt(filtered.stats[i].requests)}</td></tr>`).join('')||'<tr><td colspan="3">No exclusion rules. All valid CSV rows are included.</td></tr>';
+  $('aResults').hidden=false;$('aStale').hidden=true;aError('');aRender();
+ }catch(e){aError(e.message);aDirty();}
+}
+function aRender(){
+ if(!aLast)return;const group=aLast.groups.find(g=>g.key===$('aGroup').value)||aLast.groups[0],analysis=aAnalyze(group.rows,aLast.config),supported=analysis.results.filter(r=>r.supported),combined=supported.length?aReplay(analysis.rows,supported,aLast.config.timezone):null;
+ aRendered={group,analysis,combined};$('aAnalyzedCount').textContent=fmt(analysis.total);$('aOutside').textContent=`${fmt(analysis.outsideRequests)} requests outside or crossing the date range`;
+ $('aMethod').textContent=`${group.label} · ${aLast.config.percentile===100?'Observed peak':'P'+aLast.config.percentile} × ${fmt(1+aLast.config.headroom/100)} · Calendar counters in UTC${aLast.config.timezone>=0?'+':''}${aLast.config.timezone}. Percentiles include zero-traffic periods inside the declared coverage.`;
+ $('aRecommendations').innerHTML=analysis.results.map(r=>r.supported?`<tr><td>${QUNIT[r.unit]}</td><td>${fmt(r.buckets)}<br><span class="hint">${fmt(r.activeBuckets)} nonzero</span></td><td>${fmt(r.p95)} / ${fmt(r.p99)}</td><td>${fmt(r.peak)}</td><td class="good">${fmt(r.recommended)} / ${QUNIT[r.unit]}</td><td>${fmt(r.rejected)} · ${fmt(r.rejectionPct)}%</td></tr>`:`<tr><td>${QUNIT[r.unit]}</td><td colspan="5" class="hint">${escapeHTML(r.reason)}</td></tr>`).join('');
+ $('aCombined').textContent=supported.length?`Combined replay of ${supported.length} supported rules: ${fmt(combined.accepted)} accepted, ${fmt(combined.rejected)} rejected (${fmt(analysis.total?combined.rejected/analysis.total*100:0)}%). Atomic, accepted-only calendar counters. Standalone rejection counts above must not be added together.`:'No supported candidate limits for this traffic and reporting range. Adjust coverage or use a finer-resolution source; no rates have been extrapolated.';
+ const notes=[aLast.config.mode==='events'?'Request-level timestamps are used for calendar replay.':'Aggregate counts are evaluated only at their supported calendar resolution.','Assumed complete export coverage; missing periods count as zero.','Partial calendar periods do not determine percentiles; replay includes observed rows in them with empty starting counters.'];
+ if(aLast.source.invalid.length)notes.push(`${aLast.source.invalid.length} invalid rows were explicitly skipped; their traffic is unknown.`);
+ if(supported.some(r=>r.buckets<100))notes.push('Some periods have fewer than 100 complete observations; tail percentiles are weakly supported.');
+ if(aLast.groupCount>200)notes.push(`Showing the 200 busiest of ${aLast.groupCount} groups by traffic before the date filter. Refine exclusions to inspect other groups.`);
+ if(!analysis.total)notes.push('No positive traffic remains in this group and reporting range.');
+ $('aQuality').textContent=notes.join(' ');
+}
+function aReport(){if(!aLast||!aRendered)throw Error('Run an analysis first.');return {version:1,kind:'traffic-limit-analysis',source:{name:aLast.sourceName,validRows:aLast.source.rows.length,invalidRows:aLast.source.invalid.length},scope:aLast.scope,group:aRendered.group.label,filters:aLast.filters,ignoreCase:aLast.ignoreCase,mapping:Object.fromEntries(Object.entries(aLast.config.map).map(([key,i])=>[key,i<0?null:aLast.headers[i]])),settings:{mode:aLast.config.mode,sourceBucketMs:aLast.config.mode==='buckets'?aLast.config.bucketMs:null,timezone:aLast.config.timezone,reportStart:new Date(aLast.config.start).toISOString(),reportEnd:new Date(aLast.config.end).toISOString(),percentile:aLast.config.percentile,headroomPercent:aLast.config.headroom,stripQuery:aLast.config.stripQuery},traffic:{analyzedRequests:aRendered.analysis.total,excludedRequests:aLast.filtered.excludedRequests,outsideRangeRequests:aRendered.analysis.outsideRequests},recommendations:aRendered.analysis.results,combinedCalendarReplay:aRendered.combined,assumptions:['Calendar counters only; not an Edge smoothing recommendation.','Missing periods inside declared coverage count as zero.','Percentiles use complete periods only.','No extrapolation below source resolution or to unobserved complete periods.','No raw traffic rows included in this report.']};}
+function aCsvCell(value){let s=String(value??'');if(/^[\s]*[=+@-]/.test(s))s="'"+s;return '"'+s.replaceAll('"','""')+'"';}
+function aReportCSV(report){return '\ufeff'+[['scope','group','period','complete_buckets','p95','p99','observed_peak','recommended_limit','standalone_429','standalone_429_percent','note'],...report.recommendations.map(r=>[report.scope,report.group,r.unit,r.buckets??'',r.p95??'',r.p99??'',r.peak??'',r.recommended??'',r.rejected??'',r.rejectionPct??'',r.supported?'Shared calendar window':r.reason])].map(row=>row.map(aCsvCell).join(',')).join('\r\n');}
+function aSample(mode){
+ if(mode==='events'){const lines=['timestamp,apiproxy,developer,request_path,developer_app,response_status_code,environment'];for(let second=0;second<180;second++)for(let j=0;j<4;j++){const t=new Date(Date.UTC(2026,8,1)+second*1000+j*100).toISOString();lines.push([t,j%2?'catalog-api':'orders-api',j===3?'monitor@example.test':'partner@example.test',j===3?'/health?probe=1':j%2?'/products':'/orders',j===3?'monitoring':'storefront',second===60&&j===0?429:200,'prod'].join(','));}return lines.join('\n');}
+ const lines=['hour,apiproxy,developer,request_path,sum(message_count),environment'];for(let h=0;h<48;h++)for(let api=0;api<2;api++)lines.push([new Date(Date.UTC(2026,8,1)+h*3600000).toISOString(),api?'catalog-api':'orders-api',api?'internal@example.test':'partner@example.test',api?'/products':'/orders',(h%24===12||h%24===18?9000:1000)*(api+1),'prod'].join(','));return lines.join('\n');
+}
+$('advisorTab').addEventListener('click',()=>selectWorkspace('advisor'));
+$('aFile').addEventListener('change',async e=>{const file=e.target.files[0];if(!file)return;aDirty();try{if(file.size>15000000)throw Error('CSV files must be 15 MB or smaller.');aLoadText(await file.text(),file.name);}catch(err){aError(err.message);}finally{e.target.value='';}});
+$('aLoadPaste').addEventListener('click',()=>aLoadText($('aPaste').value,'Pasted CSV'));
+$('aEventSample').addEventListener('click',()=>aLoadText(aSample('events'),'Synthetic request-log example'));
+$('aBucketSample').addEventListener('click',()=>aLoadText(aSample('buckets'),'Synthetic hourly-report example',3600000));
+$('aDownloadEvents').addEventListener('click',()=>download(aSample('events'),'text/csv;charset=utf-8','edge-request-log-example.csv'));
+$('aDownloadBuckets').addEventListener('click',()=>download(aSample('buckets'),'text/csv;charset=utf-8','edge-hourly-report-example.csv'));
+$('aValidate').addEventListener('click',()=>{try{aPrepare();aError('');aDirty();}catch(e){aError(e.message);}});
+$('advisorConfig').addEventListener('input',()=>{aRefreshMode();aDirty();});$('advisorConfig').addEventListener('submit',e=>{e.preventDefault();aRun();});
+$('aAddExclude').addEventListener('click',()=>{if($('aExclusions').children.length>=20){notify('Use at most 20 exclusion rules.');return;}$('aExclusions').insertAdjacentHTML('beforeend',aExclusionMarkup());aDirty();});
+$('aExclusions').addEventListener('click',e=>{const b=e.target.closest('[data-a-remove]');if(b){b.closest('.advisor-exclude').remove();aDirty();}});
+$('aGroup').addEventListener('change',aRender);
+$('aExportJSON').addEventListener('click',()=>{if(aLast)download(JSON.stringify(aReport(),null,2),'application/json','traffic-limit-analysis.json');});
+$('aExportCSV').addEventListener('click',()=>{if(aLast)download(aReportCSV(aReport()),'text/csv;charset=utf-8','traffic-limit-recommendations.csv');});
+$('aClear').addEventListener('click',()=>{aParsed=null;aLast=null;aRendered=null;aSourceName='';$('aPaste').value='';$('aMapping').innerHTML='';$('aExclusions').innerHTML='';for(const id of ['aPreviewHead','aPreviewRows','aGroup','aRecommendations','aAudit','aValidation','aInvalidRows','aMethod','aCombined','aQuality'])$(id).textContent='';$('aStart').value='';$('aEnd').value='';$('aResults').hidden=true;$('advisorConfig').hidden=true;$('aSource').textContent='Imported traffic cleared. Load a CSV or an example to begin.';aError('');});
+if($('advisorTab').classList.contains('active'))selectWorkspace('advisor');
+if(location.hash==='#advisor')selectWorkspace('advisor');
+window.addEventListener('hashchange',()=>{if(location.hash==='#advisor')selectWorkspace('advisor');});
 
 </script></body></html>
